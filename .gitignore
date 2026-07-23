@@ -32,6 +32,10 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+
+# imágenes subidas por el admin (no versionar; en prod van a S3)
+/public/uploads
 
 # vercel
 .vercel
@@ -39,3 +43,19 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/src/generated/prisma
+
+# tooling y guías de agentes de IA (setup local, no se versiona)
+.agents/
+.claude/
+.windsurf/
+.specify/
+.opencode/
+.cursor/
+.github/copilot-instructions.md
+skills-lock.json
+.mcp.json
+CLAUDE.md
+AGENTS.md
+GEMINI.md

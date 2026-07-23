@@ -1,65 +1,138 @@
-import Image from "next/image";
+import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+import { SiteHeader, SiteFooter } from "@/components/storefront";
+import { ProductCard } from "@/components/ProductCard";
+import { LinkButton } from "@/components/ui";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+const CATEGORIES = [
+  { slug: "anillos", name: "Anillos" },
+  { slug: "collares", name: "Collares" },
+  { slug: "aros", name: "Aros" },
+  { slug: "pulseras", name: "Pulseras" },
+];
+
+export default async function HomePage() {
+  const featured = await prisma.product.findMany({
+    where: { active: true, featured: true },
+    include: { images: { orderBy: { position: "asc" }, take: 1 }, category: true },
+    take: 8,
+  });
+
+  const latest = await prisma.product.findMany({
+    where: { active: true },
+    include: { images: { orderBy: { position: "asc" }, take: 1 }, category: true },
+    orderBy: { createdAt: "desc" },
+    take: 8,
+  });
+
+  const shown = featured.length > 0 ? featured : latest;
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      <SiteHeader />
+
+      {/* Hero */}
+      <section className="relative overflow-hidden">
+        <div className="mx-auto grid max-w-6xl items-center gap-10 px-6 pt-14 pb-20 lg:grid-cols-2">
+          <div>
+            <p className="text-gold-dark mb-4 text-xs tracking-[0.2em] uppercase">
+              Nueva colección
+            </p>
+            <h1 className="font-display text-ink text-5xl leading-[1.05] sm:text-6xl">
+              Brillá con lo <span className="text-sage italic">esencial</span>.
+            </h1>
+            <p className="text-muted mt-5 max-w-md">
+              Joyas artesanales en plata y oro, pensadas para acompañar cada momento.
+              Piezas atemporales, hechas para durar.
+            </p>
+            <div className="mt-8 flex gap-3">
+              <LinkButton href="/tienda">Ver la tienda</LinkButton>
+              <LinkButton href="/tienda?cat=anillos" variant="outline">
+                Anillos
+              </LinkButton>
+            </div>
+          </div>
+          <div className="relative">
+            <div className="from-rose-soft via-sand to-cream arch flex aspect-[4/5] items-center justify-center overflow-hidden rounded-[2rem] bg-gradient-to-br">
+              {shown[0]?.images[0] ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={shown[0].images[0].url}
+                  alt={shown[0].name}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <span className="font-display text-sage/40 text-3xl">Luci</span>
+              )}
+            </div>
+            <div className="bg-gold/20 absolute -bottom-4 -left-4 h-24 w-24 rounded-full blur-2xl" />
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+      </section>
+
+      {/* Categorías */}
+      <section className="mx-auto max-w-6xl px-6">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          {CATEGORIES.map((c) => (
+            <Link
+              key={c.slug}
+              href={`/tienda?cat=${c.slug}`}
+              className="group border-line hover:border-sage rounded-[var(--radius-card)] border bg-white p-6 text-center transition-colors"
+            >
+              <div className="bg-rose-soft group-hover:bg-rose mx-auto mb-3 h-14 w-14 rounded-full transition-colors" />
+              <p className="text-ink text-sm font-medium">{c.name}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Destacados */}
+      <section className="mx-auto mt-20 max-w-6xl px-6">
+        <div className="mb-8 flex items-end justify-between">
+          <div>
+            <p className="text-gold-dark text-xs tracking-[0.2em] uppercase">Selección</p>
+            <h2 className="font-display text-ink mt-1 text-3xl">Piezas destacadas</h2>
+          </div>
+          <Link href="/tienda" className="text-sage text-sm hover:underline">
+            Ver todo →
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
+          {shown.map((p) => (
+            <ProductCard
+              key={p.id}
+              slug={p.slug}
+              name={p.name}
+              price={p.basePrice}
+              image={p.images[0]?.url}
+              category={p.category?.name}
+              featured={p.featured}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          ))}
         </div>
-      </main>
-    </div>
+      </section>
+
+      {/* Franja de confianza */}
+      <section className="mx-auto mt-20 max-w-6xl px-6">
+        <div className="bg-sage text-cream grid gap-6 rounded-[var(--radius-card)] p-10 text-center sm:grid-cols-3">
+          <div>
+            <p className="font-display text-xl">Envíos a todo el país</p>
+            <p className="text-cream/70 mt-1 text-sm">Despacho en 24-48hs</p>
+          </div>
+          <div>
+            <p className="font-display text-xl">Pago seguro</p>
+            <p className="text-cream/70 mt-1 text-sm">Con Mercado Pago</p>
+          </div>
+          <div>
+            <p className="font-display text-xl">Hecho a mano</p>
+            <p className="text-cream/70 mt-1 text-sm">Piezas artesanales</p>
+          </div>
+        </div>
+      </section>
+
+      <SiteFooter />
+    </>
   );
 }

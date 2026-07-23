@@ -1,0 +1,39 @@
+name: Deploy to EC2
+
+# Disparo manual desde la pestaña Actions (o cambiá a push:branches[main] para CD automático).
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy (SSH → EC2)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -e
+            cd ${{ secrets.EC2_APP_DIR }}
+            git pull origin main
+            npm ci
+            npx prisma generate
+            npx prisma migrate deploy
+            npm run build
+            pm2 restart tienda-luci || pm2 start npm --name tienda-luci -- start
+            pm2 save
+
+# ─────────────────────────────────────────────────────────────
+# Secrets a configurar en el repo (Settings → Secrets and variables → Actions):
+#   EC2_HOST      → IP o dominio de la instancia EC2
+#   EC2_USER      → usuario SSH (ej: ubuntu)
+#   EC2_SSH_KEY   → clave privada SSH (contenido completo del .pem)
+#   EC2_APP_DIR   → ruta del proyecto en el servidor (ej: /home/ubuntu/tienda-luci)
+#
+# En el servidor (una sola vez): instalar Node 20+, PM2 (npm i -g pm2),
+# clonar el repo y crear el .env de producción (DATABASE_URL, AUTH_SECRET,
+# MP_ACCESS_TOKEN, MP_PUBLIC_KEY, NEXT_PUBLIC_SITE_URL).
+# ─────────────────────────────────────────────────────────────
