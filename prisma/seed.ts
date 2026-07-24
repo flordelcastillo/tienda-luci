@@ -183,6 +183,34 @@ async function main() {
     });
     console.log(`✔ Producto: ${created.name}`);
   }
+
+  // Catálogo de relleno para que la tienda tenga varias páginas (paginación).
+  const fillerImg = "https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=800";
+  const fillerCats = [
+    { id: anillos?.id, name: "Anillo", material: "Plata 925" },
+    { id: collares?.id, name: "Collar", material: "Oro 18k (baño)" },
+    { id: aros?.id, name: "Aros", material: "Acero quirúrgico" },
+  ];
+  for (let i = 1; i <= 12; i++) {
+    const c = fillerCats[i % fillerCats.length];
+    const name = `${c.name} Clásico ${String(i).padStart(2, "0")}`;
+    const slug = `pieza-clasica-${String(i).padStart(2, "0")}`;
+    const created = await prisma.product.upsert({
+      where: { slug },
+      update: {},
+      create: {
+        name,
+        slug,
+        description: `${name} de la colección permanente.`,
+        material: c.material,
+        basePrice: 1500000 + i * 100000,
+        categoryId: c.id,
+        images: { create: [{ url: fillerImg, alt: name, position: 0 }] },
+        variants: { create: [{ name: "Único", sku: `CLA-${i}`, priceDelta: 0, stock: 10 }] },
+      },
+    });
+    console.log(`✔ Relleno: ${created.name}`);
+  }
 }
 
 main()

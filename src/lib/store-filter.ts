@@ -8,6 +8,7 @@ export type StoreParams = {
   min?: string; // en pesos (texto del input)
   max?: string; // en pesos
   sort?: string; // clave de ordenamiento (ver SORT_OPTIONS)
+  page?: string; // número de página (1-based)
 };
 
 // Opciones de ordenamiento visibles en la tienda. El primero es el default.
@@ -72,6 +73,11 @@ export function buildStoreQuery(
   // El orden por defecto no se agrega a la URL para mantenerla limpia.
   const sort = merged.sort?.trim();
   if (sort && sort !== DEFAULT_SORT) sp.set("sort", sort);
+  // La página se toma SOLO de los overrides, nunca del estado actual: así al
+  // cambiar categoría/búsqueda/orden se vuelve a la página 1, y solo los
+  // controles de paginación (que pasan `page` explícito) la preservan.
+  const page = overrides.page?.trim();
+  if (page && page !== "1") sp.set("page", page);
   const qs = sp.toString();
   return qs ? `/tienda?${qs}` : "/tienda";
 }

@@ -4,7 +4,9 @@ const SLUG = "anillo-solitario-aurora";
 const NAME = "Anillo Solitario Aurora";
 
 test("desde la tienda se navega al detalle del producto", async ({ page }) => {
-  await page.goto("/tienda");
+  // Buscamos el producto para que aparezca en la primera página sin depender
+  // del orden/paginación del catálogo completo.
+  await page.goto("/tienda?q=Aurora");
   await page.getByRole("link", { name: new RegExp(NAME) }).first().click();
 
   await expect(page).toHaveURL(new RegExp(`/producto/${SLUG}`));
