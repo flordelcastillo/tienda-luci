@@ -10,13 +10,18 @@ describe("pesosToCents", () => {
   it("parsea formato es-AR con miles y coma decimal", () => {
     expect(pesosToCents("12.500,50")).toBe(1250050);
     expect(pesosToCents("1.000")).toBe(100000);
+    expect(pesosToCents("1.000.000")).toBe(100000000);
   });
 
-  // OJO: el punto se trata SIEMPRE como separador de miles (se elimina),
-  // así que un punto decimal solo no se interpreta como decimal.
-  // El comentario de money.ts sugiere lo contrario → discrepancia conocida.
-  it("trata el punto como separador de miles", () => {
-    expect(pesosToCents("12500.5")).toBe(12500500);
+  it("interpreta el punto como decimal cuando deja 1-2 dígitos", () => {
+    expect(pesosToCents("12500.5")).toBe(1250050);
+    expect(pesosToCents("12500.50")).toBe(1250050);
+    expect(pesosToCents("1.5")).toBe(150);
+  });
+
+  it("interpreta el punto como miles cuando deja 3 dígitos", () => {
+    expect(pesosToCents("12.500")).toBe(1250000);
+    expect(pesosToCents("100.000")).toBe(10000000);
   });
 
   it("devuelve 0 ante entrada inválida", () => {
