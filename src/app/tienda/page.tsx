@@ -1,7 +1,10 @@
 import Link from "next/link";
+import { Search, X } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { SiteHeader, SiteFooter } from "@/components/storefront";
 import { ProductCard } from "@/components/ProductCard";
+import { Button, Input } from "@/components/ui";
+import { buildStoreWhere, buildStoreQuery, type StoreParams } from "@/lib/store-filter";
 
 export const dynamic = "force-dynamic";
 
@@ -16,18 +19,18 @@ const CATS = [
 export default async function TiendaPage({
   searchParams,
 }: {
-  searchParams: Promise<{ cat?: string }>;
+  searchParams: Promise<StoreParams>;
 }) {
-  const { cat } = await searchParams;
+  const params = await searchParams;
+  const { cat = "", q = "", min = "", max = "" } = params;
 
   const products = await prisma.product.findMany({
-    where: {
-      active: true,
-      ...(cat ? { category: { slug: cat } } : {}),
-    },
+    where: buildStoreWhere(params),
     include: { images: { orderBy: { position: "asc" }, take: 1 }, category: true },
     orderBy: { createdAt: "desc" },
   });
+
+  const hasFilters = Boolean(q || min || max || cat);
 
   return (
     <>
@@ -36,13 +39,14 @@ export default async function TiendaPage({
         <h1 className="font-display text-ink text-4xl">Tienda</h1>
         <p className="text-muted mt-1">{products.length} piezas disponibles</p>
 
+        {/* Categorías: preservan la búsqueda y el rango de precio actuales */}
         <div className="mt-6 flex flex-wrap gap-2">
           {CATS.map((c) => (
             <Link
               key={c.slug}
-              href={c.slug ? `/tienda?cat=${c.slug}` : "/tienda"}
+              href={buildStoreQuery(params, { cat: c.slug })}
               className={`rounded-full px-4 py-1.5 text-sm transition-colors ${
-                (cat ?? "") === c.slug
+                cat === c.slug
                   ? "bg-sage text-cream"
                   : "border-line text-ink hover:bg-sand/50 border bg-white"
               }`}
@@ -51,6 +55,54 @@ export default async function TiendaPage({
             </Link>
           ))}
         </div>
+
+        {/* Búsqueda por nombre + rango de precio (GET, preserva la categoría) */}
+        <form
+          method="get"
+          className="mt-4 flex flex-wrap items-center gap-2"
+          role="search"
+        >
+          {cat && <input type="hidden" name="cat" value={cat} />}
+          <div className="relative min-w-56 flex-1">
+            <Search className="text-muted pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+            <Input
+              type="search"
+              name="q"
+              defaultValue={q}
+              placeholder="Buscar por nombre…"
+              aria-label="Buscar productos"
+              className="pl-9"
+            />
+          </div>
+          <Input
+            type="number"
+            name="min"
+            defaultValue={min}
+            placeholder="$ mín"
+            aria-label="Precio mínimo"
+            min={0}
+            className="w-28"
+          />
+          <Input
+            type="number"
+            name="max"
+            defaultValue={max}
+            placeholder="$ máx"
+            aria-label="Precio máximo"
+            min={0}
+            className="w-28"
+          />
+          <Button type="submit">Filtrar</Button>
+          {hasFilters && (
+            <Link
+              href="/tienda"
+              className="text-muted hover:text-ink inline-flex items-center gap-1 text-sm"
+            >
+              <X className="size-4" />
+              Limpiar
+            </Link>
+          )}
+        </form>
 
         <div className="mt-8 grid grid-cols-2 gap-6 lg:grid-cols-4">
           {products.map((p) => (
@@ -68,7 +120,7 @@ export default async function TiendaPage({
 
         {products.length === 0 && (
           <p className="text-muted py-16 text-center">
-            No hay productos en esta categoría.
+            No se encontraron piezas con esos filtros.
           </p>
         )}
       </div>
