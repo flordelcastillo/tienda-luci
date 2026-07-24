@@ -1,18 +1,17 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { SiteHeader, SiteFooter } from "@/components/storefront";
+import { ProductGallery } from "@/components/ProductGallery";
 import { Badge } from "@/components/ui";
+import { buildProductMetadata } from "@/lib/product-meta";
 import { BuyBox } from "./BuyBox";
 
 export const dynamic = "force-dynamic";
 
-export default async function ProductoPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
-  const product = await prisma.product.findFirst({
+// Trae solo lo necesario para armar los metadatos (nombre, descripción, portada).
+async function getProduct(slug: string) {
+  return prisma.product.findFirst({
     where: { slug, active: true },
     include: {
       images: { orderBy: { position: "asc" } },
@@ -20,10 +19,47 @@ export default async function ProductoPage({
       category: true,
     },
   });
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const product = await getProduct(slug);
+  if (!product) return { title: "Producto no encontrado · Luci Joyas" };
+
+  const meta = buildProductMetadata({
+    name: product.name,
+    description: product.description,
+    material: product.material,
+    gemstone: product.gemstone,
+    category: product.category?.name,
+    basePrice: product.basePrice,
+    image: product.images[0]?.url,
+  });
+
+  return {
+    title: meta.title,
+    description: meta.description,
+    openGraph: {
+      title: meta.title,
+      description: meta.description,
+      images: meta.image ? [{ url: meta.image }] : undefined,
+    },
+  };
+}
+
+export default async function ProductoPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const product = await getProduct(slug);
 
   if (!product) notFound();
-
-  const cover = product.images[0]?.url;
 
   return (
     <>
@@ -31,35 +67,14 @@ export default async function ProductoPage({
       <div className="mx-auto max-w-6xl px-6 py-10">
         <div className="grid gap-12 lg:grid-cols-2">
           {/* Galería */}
-          <div className="space-y-3">
-            <div className="bg-sand aspect-square overflow-hidden rounded-[var(--radius-card)]">
-              {cover && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={cover}
-                  alt={product.name}
-                  className="h-full w-full object-cover"
-                />
-              )}
-            </div>
-            {product.images.length > 1 && (
-              <div className="grid grid-cols-4 gap-3">
-                {product.images.slice(0, 4).map((img) => (
-                  <div
-                    key={img.id}
-                    className="bg-sand aspect-square overflow-hidden rounded-xl"
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={img.url}
-                      alt={img.alt}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <ProductGallery
+            name={product.name}
+            images={product.images.map((img) => ({
+              id: img.id,
+              url: img.url,
+              alt: img.alt,
+            }))}
+          />
 
           {/* Info + compra */}
           <div>

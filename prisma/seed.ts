@@ -46,7 +46,10 @@ async function main() {
       basePrice: 4500000,
       categoryId: anillos?.id,
       featured: true,
-      image: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800",
+      images: [
+        "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800",
+        "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800",
+      ],
       variants: [
         { name: "Talle 14", sku: "AUR-14", stock: 3 },
         { name: "Talle 16", sku: "AUR-16", stock: 5 },
@@ -62,7 +65,7 @@ async function main() {
       basePrice: 3800000,
       categoryId: collares?.id,
       featured: true,
-      image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800",
+      images: ["https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800"],
       variants: [{ name: "45 cm", sku: "LUN-45", stock: 8 }],
     },
     {
@@ -74,19 +77,21 @@ async function main() {
       basePrice: 2900000,
       categoryId: aros?.id,
       featured: false,
-      image: "https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=800",
+      images: ["https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=800"],
       variants: [{ name: "Único", sku: "SOL-U", stock: 12 }],
     },
   ];
 
   for (const p of demo) {
-    const { variants, image, ...data } = p;
+    const { variants, images, ...data } = p;
     const created = await prisma.product.upsert({
       where: { slug: p.slug },
       update: {},
       create: {
         ...data,
-        images: { create: [{ url: image, alt: p.name, position: 0 }] },
+        images: {
+          create: images.map((url, i) => ({ url, alt: p.name, position: i })),
+        },
         variants: { create: variants.map((v) => ({ ...v, priceDelta: 0 })) },
       },
     });
