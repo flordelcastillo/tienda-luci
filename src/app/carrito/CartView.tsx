@@ -8,7 +8,7 @@ import { Button, Card, Field, Input, Select } from "@/components/ui";
 import { formatARS } from "@/lib/money";
 import { useCart, setQty, removeLine, clearCart, lineKey, type CartItem } from "@/lib/cart";
 import { DELIVERY_OPTIONS, deliveryLabel, needsAddress } from "@/lib/delivery";
-import { createOrder } from "./actions";
+import { createOrder, previewCoupon } from "./actions";
 
 // Arma el mensaje de WhatsApp del pedido. Texto plano, sin emojis, para que se
 // vea bien en cualquier dispositivo.
@@ -22,17 +22,24 @@ function buildMessage(
     email: string;
     deliveryZone: string;
   },
+  couponCode: string,
+  discount: number,
+  total: number,
 ) {
   const lines = cart.map((i) => {
     const variant = i.variantName ? ` (${i.variantName})` : "";
     const gift = i.gift ? " + cajita de regalo" : "";
     return `- ${i.name}${variant}${gift} x${i.qty} - ${formatARS(i.unitPrice * i.qty)}`;
   });
-  const total = cart.reduce((a, i) => a + i.unitPrice * i.qty, 0);
+  const subtotal = cart.reduce((a, i) => a + i.unitPrice * i.qty, 0);
 
   return (
     `Hola Teia! Te hago este pedido (#${orderNumber}):\n\n` +
     `${lines.join("\n")}\n\n` +
+    (discount > 0
+      ? `Subtotal: ${formatARS(subtotal)}\n` +
+        `Cupon ${couponCode}: -${formatARS(discount)}\n`
+      : "") +
     `Total: ${formatARS(total)}\n\n` +
     `Mis datos:\n` +
     `Nombre: ${customer.name}\n` +
@@ -55,7 +62,37 @@ export function CartView({ whatsappNumber }: { whatsappNumber: string }) {
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState<{ number: number; url: string } | null>(null);
 
-  const total = cart.reduce((a, i) => a + i.unitPrice * i.qty, 0);
+  // Cupón: input, resultado aplicado y estado de carga.
+  const [couponInput, setCouponInput] = useState("");
+  const [coupon, setCoupon] = useState<{ code: string; discount: number; summary: string } | null>(null);
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [checkingCoupon, setCheckingCoupon] = useState(false);
+
+  const subtotal = cart.reduce((a, i) => a + i.unitPrice * i.qty, 0);
+  // El descuento se recalcula sobre el subtotal vigente (por si cambió el carrito).
+  const discount = coupon ? Math.min(coupon.discount, subtotal) : 0;
+  const total = subtotal - discount;
+
+  async function applyCoupon() {
+    setCouponError(null);
+    if (!couponInput.trim()) return;
+    setCheckingCoupon(true);
+    const res = await previewCoupon(couponInput, subtotal);
+    setCheckingCoupon(false);
+    if (!res.ok) {
+      setCoupon(null);
+      setCouponError(res.error);
+      return;
+    }
+    setCoupon({ code: res.code, discount: res.discount, summary: res.summary });
+    setCouponInput(res.code);
+  }
+
+  function removeCoupon() {
+    setCoupon(null);
+    setCouponInput("");
+    setCouponError(null);
+  }
 
   async function finish() {
     setError(null);
@@ -87,6 +124,7 @@ export function CartView({ whatsappNumber }: { whatsappNumber: string }) {
         gift: i.gift,
       })),
       customer,
+      couponCode: coupon?.code ?? "",
     });
 
     if (!res.ok) {
@@ -95,7 +133,14 @@ export function CartView({ whatsappNumber }: { whatsappNumber: string }) {
       return;
     }
 
-    const message = buildMessage(res.orderNumber, cart, customer);
+    const message = buildMessage(
+      res.orderNumber,
+      cart,
+      customer,
+      res.couponCode,
+      res.discount,
+      res.total,
+    );
     const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
     clearCart();
     setDone({ number: res.orderNumber, url });
@@ -204,8 +249,51 @@ export function CartView({ whatsappNumber }: { whatsappNumber: string }) {
         <Card className="space-y-3 p-5">
           <div className="flex justify-between text-sm">
             <span className="text-muted">Subtotal</span>
-            <span className="text-ink">{formatARS(total)}</span>
+            <span className="text-ink">{formatARS(subtotal)}</span>
           </div>
+
+          {/* Cupón de descuento */}
+          {coupon ? (
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-sage inline-flex items-center gap-1">
+                Cupón {coupon.code} ({coupon.summary})
+                <button
+                  onClick={removeCoupon}
+                  className="text-muted hover:text-red-600 ml-1 text-xs underline"
+                >
+                  quitar
+                </button>
+              </span>
+              <span className="text-sage">−{formatARS(discount)}</span>
+            </div>
+          ) : (
+            <div className="space-y-1">
+              <div className="flex gap-2">
+                <Input
+                  value={couponInput}
+                  onChange={(e) => setCouponInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      applyCoupon();
+                    }
+                  }}
+                  placeholder="Cupón de descuento"
+                  aria-label="Cupón de descuento"
+                  className="uppercase"
+                />
+                <Button
+                  variant="outline"
+                  onClick={applyCoupon}
+                  disabled={checkingCoupon || !couponInput.trim()}
+                >
+                  {checkingCoupon ? "…" : "Aplicar"}
+                </Button>
+              </div>
+              {couponError && <p className="text-xs text-red-600">{couponError}</p>}
+            </div>
+          )}
+
           <p className="text-muted text-xs">El envío se coordina por WhatsApp.</p>
           <div className="border-line flex justify-between border-t pt-3">
             <span className="text-ink font-medium">Total</span>

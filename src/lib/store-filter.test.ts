@@ -13,10 +13,14 @@ describe("buildStoreWhere", () => {
     });
   });
 
-  it("busca por nombre sin distinguir mayúsculas y recorta espacios", () => {
+  it("busca en nombre/descripción/material sin distinguir mayúsculas y recorta espacios", () => {
     expect(buildStoreWhere({ q: "  Anillo  " })).toEqual({
       active: true,
-      name: { contains: "Anillo", mode: "insensitive" },
+      OR: [
+        { name: { contains: "Anillo", mode: "insensitive" } },
+        { description: { contains: "Anillo", mode: "insensitive" } },
+        { material: { contains: "Anillo", mode: "insensitive" } },
+      ],
     });
   });
 
@@ -42,7 +46,11 @@ describe("buildStoreWhere", () => {
     expect(buildStoreWhere({ cat: "aros", q: "oro", min: "2000" })).toEqual({
       active: true,
       category: { slug: "aros" },
-      name: { contains: "oro", mode: "insensitive" },
+      OR: [
+        { name: { contains: "oro", mode: "insensitive" } },
+        { description: { contains: "oro", mode: "insensitive" } },
+        { material: { contains: "oro", mode: "insensitive" } },
+      ],
       basePrice: { gte: 200000 },
     });
   });

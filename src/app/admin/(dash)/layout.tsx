@@ -5,6 +5,7 @@ import {
   Boxes,
   CreditCard,
   Star,
+  Ticket,
   Settings,
   LogOut,
   Store,
@@ -20,6 +21,7 @@ const nav = [
   { href: "/admin/inventario", label: "Inventario", Icon: Boxes },
   { href: "/admin/pagos", label: "Pagos y pedidos", Icon: CreditCard, badgeKey: "pending" },
   { href: "/admin/resenas", label: "Reseñas", Icon: Star },
+  { href: "/admin/cupones", label: "Cupones", Icon: Ticket },
   { href: "/admin/ajustes", label: "Ajustes", Icon: Settings },
 ];
 

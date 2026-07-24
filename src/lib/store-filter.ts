@@ -43,8 +43,15 @@ export function buildStoreWhere(params: StoreParams): Prisma.ProductWhereInput {
 
   if (params.cat?.trim()) where.category = { slug: params.cat.trim() };
 
+  // Búsqueda por texto: matchea en nombre, descripción o material (insensible).
   const q = params.q?.trim();
-  if (q) where.name = { contains: q, mode: "insensitive" };
+  if (q) {
+    where.OR = [
+      { name: { contains: q, mode: "insensitive" } },
+      { description: { contains: q, mode: "insensitive" } },
+      { material: { contains: q, mode: "insensitive" } },
+    ];
+  }
 
   // Destinatario: incluye siempre las piezas "unisex" en cualquier filtro concreto.
   const aud = params.aud?.trim();

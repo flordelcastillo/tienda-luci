@@ -12,6 +12,7 @@ import { formatARS } from "@/lib/money";
 import { getSettings } from "@/lib/settings";
 import { THEME_LABEL, labelFor } from "@/lib/product-attributes";
 import { BuyBox } from "./BuyBox";
+import { ReviewForm } from "./ReviewForm";
 
 const AUDIENCE_LABEL: Record<string, string> = {
   mujer: "Mujer",
@@ -273,9 +274,9 @@ export default async function ProductoPage({
         )}
 
         {/* Reseñas */}
-        {product.reviews.length > 0 && (
-          <section className="mt-20">
-            <h2 className="font-display text-ink text-2xl">Lo que dicen las clientas</h2>
+        <section className="mt-20">
+          <h2 className="font-display text-ink text-2xl">Lo que dicen las clientas</h2>
+          {product.reviews.length > 0 ? (
             <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {product.reviews.map((r) => (
                 <div
@@ -297,8 +298,15 @@ export default async function ProductoPage({
                 </div>
               ))}
             </div>
-          </section>
-        )}
+          ) : (
+            <p className="text-muted mt-2 text-sm">
+              Todavía no hay reseñas de esta pieza. ¡Sé la primera en dejar la tuya!
+            </p>
+          )}
+          <div className="mt-8 max-w-xl">
+            <ReviewForm slug={product.slug} />
+          </div>
+        </section>
       </div>
       <SiteFooter />
     </>

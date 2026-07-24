@@ -85,6 +85,21 @@ model Review {
   @@index([productId])
 }
 
+// Cupón de descuento (para promos de Instagram, etc.). El descuento puede ser
+// un porcentaje (value = 10 → 10%) o un monto fijo en centavos (value = 50000 → $500).
+model Coupon {
+  id         String   @id @default(cuid())
+  code       String   @unique // guardado en MAYÚSCULAS; el cliente lo tipea sin importar el caso
+  kind       String   @default("percent") // percent | fixed
+  value      Int // percent: 1..100 · fixed: centavos
+  minSubtotal Int     @default(0) // subtotal mínimo (centavos) para que aplique
+  maxUses    Int? // tope de usos; null = ilimitado
+  usedCount  Int      @default(0)
+  active     Boolean  @default(true)
+  expiresAt  DateTime? // vencimiento; null = sin vencimiento
+  createdAt  DateTime @default(now())
+}
+
 // Variante = combinación vendible (ej: talle de anillo, largo de cadena)
 model ProductVariant {
   id         String      @id @default(cuid())
@@ -126,6 +141,8 @@ model Order {
   deliveryZone  String      @default("") // villa-mercedes | rio-cuarto | encuentro
   subtotal      Int // centavos
   shippingCost  Int         @default(0)
+  couponCode    String      @default("") // código aplicado (snapshot); "" = sin cupón
+  discount      Int         @default(0) // descuento aplicado en centavos
   total         Int
   stockApplied  Boolean     @default(false) // si ya se descontó el stock de este pedido
   items         OrderItem[]
