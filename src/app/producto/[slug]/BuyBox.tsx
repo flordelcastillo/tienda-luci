@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button, Field, Input } from "@/components/ui";
 import { formatARS } from "@/lib/money";
+import { addToCartAction } from "@/app/carrito/actions";
 
 type Variant = { id: string; name: string; priceDelta: number; stock: number };
 
@@ -116,6 +117,20 @@ export function BuyBox({
           >
             {maxQty === 0 ? "Sin stock" : "Comprar ahora"}
           </Button>
+          {/* Agregar al carrito: server action (setea la cookie y va al carrito) */}
+          <form action={addToCartAction}>
+            <input type="hidden" name="productId" value={productId} />
+            <input type="hidden" name="variantId" value={variantId} />
+            <input type="hidden" name="qty" value={qty} />
+            <Button
+              type="submit"
+              variant="outline"
+              className="w-full"
+              disabled={maxQty === 0}
+            >
+              Agregar al carrito
+            </Button>
+          </form>
         </div>
       ) : (
         <div className="space-y-3">
