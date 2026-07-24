@@ -8,10 +8,10 @@ import {
   buildStoreWhere,
   buildStoreQuery,
   buildStoreOrderBy,
-  SORT_OPTIONS,
   DEFAULT_SORT,
   type StoreParams,
 } from "@/lib/store-filter";
+import { SortSelect } from "@/components/SortSelect";
 
 export const dynamic = "force-dynamic";
 
@@ -99,18 +99,7 @@ export default async function TiendaPage({
             min={0}
             className="w-28"
           />
-          <select
-            name="sort"
-            defaultValue={sort}
-            aria-label="Ordenar por"
-            className="border-line text-ink focus-visible:ring-sage h-10 rounded-md border bg-white px-3 text-sm focus-visible:ring-2 focus-visible:outline-none"
-          >
-            {SORT_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
+          <SortSelect value={sort} />
           <Button type="submit">Filtrar</Button>
           {hasFilters && (
             <Link
