@@ -14,7 +14,7 @@ function LoginForm() {
   return (
     <Card className="w-full max-w-sm p-8">
       <div className="mb-6 text-center">
-        <p className="font-display text-sage text-3xl">Luci</p>
+        <p className="font-display text-sage text-3xl">Teia</p>
         <p className="text-muted mt-1 text-sm">Panel de administración</p>
       </div>
       <form action={action} className="space-y-4">

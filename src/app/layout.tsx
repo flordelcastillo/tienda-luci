@@ -16,8 +16,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Luci · Joyas",
-  description: "Joyería artesanal — piezas que acompañan tu día a día.",
+  title: "Teia accesorios",
+  description:
+    "Accesorios en acero quirúrgico — dijes, aros y más. No se oxidan ni manchan la piel.",
 };
 
 export default function RootLayout({

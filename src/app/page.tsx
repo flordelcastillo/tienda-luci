@@ -7,9 +7,9 @@ import { LinkButton } from "@/components/ui";
 export const dynamic = "force-dynamic";
 
 const CATEGORIES = [
-  { slug: "anillos", name: "Anillos" },
   { slug: "collares", name: "Collares" },
   { slug: "aros", name: "Aros" },
+  { slug: "anillos", name: "Anillos" },
   { slug: "pulseras", name: "Pulseras" },
 ];
 
@@ -44,13 +44,13 @@ export default async function HomePage() {
               Brillá con lo <span className="text-sage italic">esencial</span>.
             </h1>
             <p className="text-muted mt-5 max-w-md">
-              Joyas artesanales en plata y oro, pensadas para acompañar cada momento.
-              Piezas atemporales, hechas para durar.
+              Accesorios delicados en acero quirúrgico: dijes, aros y más.
+              No se oxidan, no manchan la piel y te acompañan todos los días.
             </p>
             <div className="mt-8 flex gap-3">
               <LinkButton href="/tienda">Ver la tienda</LinkButton>
-              <LinkButton href="/tienda?cat=anillos" variant="outline">
-                Anillos
+              <LinkButton href="/tienda?cat=collares" variant="outline">
+                Collares
               </LinkButton>
             </div>
           </div>
@@ -64,7 +64,7 @@ export default async function HomePage() {
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <span className="font-display text-sage/40 text-3xl">Luci</span>
+                <span className="font-display text-sage/40 text-3xl">Teia</span>
               )}
             </div>
             <div className="bg-gold/20 absolute -bottom-4 -left-4 h-24 w-24 rounded-full blur-2xl" />
@@ -126,8 +126,8 @@ export default async function HomePage() {
             <p className="text-cream/70 mt-1 text-sm">Con Mercado Pago</p>
           </div>
           <div>
-            <p className="font-display text-xl">Hecho a mano</p>
-            <p className="text-cream/70 mt-1 text-sm">Piezas artesanales</p>
+            <p className="font-display text-xl">Acero quirúrgico</p>
+            <p className="text-cream/70 mt-1 text-sm">No se oxida ni mancha la piel</p>
           </div>
         </div>
       </section>

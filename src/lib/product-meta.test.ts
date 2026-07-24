@@ -7,7 +7,7 @@ describe("buildProductMetadata", () => {
       name: "Anillo Aurora",
       basePrice: 4500000,
     });
-    expect(meta.title).toBe("Anillo Aurora · Luci Joyas");
+    expect(meta.title).toBe("Anillo Aurora · Teia accesorios");
   });
 
   it("usa la descripción propia del producto cuando existe", () => {
@@ -28,13 +28,13 @@ describe("buildProductMetadata", () => {
     });
     // truncate() colapsa el NBSP del precio a un espacio normal.
     expect(meta.description).toBe(
-      "Anillo Aurora en Plata 925 con Circonita. $ 45.000 — Luci Joyas.",
+      "Anillo Aurora en Plata 925 con Circonita. $ 45.000 — Teia accesorios.",
     );
   });
 
   it("descripción de respaldo sin material ni piedra", () => {
     const meta = buildProductMetadata({ name: "Anillo Aurora", basePrice: 2900000 });
-    expect(meta.description).toBe("Anillo Aurora. $ 29.000 — Luci Joyas.");
+    expect(meta.description).toBe("Anillo Aurora. $ 29.000 — Teia accesorios.");
   });
 
   it("trunca descripciones largas a 160 caracteres con elipsis", () => {

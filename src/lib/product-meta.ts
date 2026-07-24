@@ -17,7 +17,7 @@ export type ProductMeta = {
   image?: string;
 };
 
-const SITE = "Luci Joyas";
+const SITE = "Teia accesorios";
 const MAX_DESC = 160; // límite recomendado para meta description
 
 // Construye título y descripción SEO para un producto. Función pura: no toca
