@@ -149,6 +149,7 @@ model SiteSetting {
   heroImage         String   @default("")
   footerText        String   @default("")
   whatsapp          String   @default("")
+  notifyEmail       String   @default("") // email que recibe el aviso de nuevos pedidos
   freeShippingCents Int      @default(0)
   colorPrimary      String   @default("") // hex → --sage
   colorAccent       String   @default("") // hex → --gold

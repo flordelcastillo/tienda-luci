@@ -27,6 +27,7 @@ export default async function AjustesPage() {
           heroImage: s.heroImage,
           footerText: s.footerText,
           whatsapp: s.whatsapp,
+          notifyEmail: s.notifyEmail,
           freeShippingPesos: Math.round(s.freeShippingCents / 100),
           colorPrimary: s.colorPrimary,
           colorAccent: s.colorAccent,

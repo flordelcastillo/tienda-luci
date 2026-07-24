@@ -20,6 +20,7 @@ const schema = z.object({
   heroImage: z.string().max(300).default(""),
   footerText: z.string().max(400).default(""),
   whatsapp: z.string().max(20).default(""),
+  notifyEmail: z.union([z.string().email(), z.literal("")]).default(""),
   freeShippingPesos: z.number().int().min(0).default(0),
   colorPrimary: hex.default(""),
   colorAccent: hex.default(""),

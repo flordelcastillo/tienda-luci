@@ -15,6 +15,7 @@ export const SETTINGS_DEFAULTS = {
   footerText:
     "Accesorios en acero quirúrgico. Piezas delicadas que no se oxidan, pensadas para acompañarte todos los días.",
   whatsapp: "5492657528266",
+  notifyEmail: "",
   freeShippingCents: 3000000,
   colorPrimary: "#3b4a3f",
   colorAccent: "#c9a96a",
@@ -43,6 +44,7 @@ export const getSettings = cache(async (): Promise<SiteSettings> => {
     heroImage: row.heroImage ?? "",
     footerText: pick(row.footerText, SETTINGS_DEFAULTS.footerText),
     whatsapp: pick(row.whatsapp, SETTINGS_DEFAULTS.whatsapp),
+    notifyEmail: row.notifyEmail ?? "",
     freeShippingCents: row.freeShippingCents ?? SETTINGS_DEFAULTS.freeShippingCents,
     colorPrimary: pick(row.colorPrimary, SETTINGS_DEFAULTS.colorPrimary),
     colorAccent: pick(row.colorAccent, SETTINGS_DEFAULTS.colorAccent),

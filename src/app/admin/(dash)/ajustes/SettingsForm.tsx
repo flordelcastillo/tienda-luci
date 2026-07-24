@@ -17,6 +17,7 @@ type Initial = {
   heroImage: string;
   footerText: string;
   whatsapp: string;
+  notifyEmail: string;
   freeShippingPesos: number;
   colorPrimary: string;
   colorAccent: string;
@@ -168,6 +169,17 @@ export function SettingsForm({ initial }: { initial: Initial }) {
             />
           </Field>
         </div>
+        <Field
+          label="Email para avisos de pedidos"
+          hint="Te llega un mail cuando entra un pedido nuevo (requiere configurar el envío en el servidor)."
+        >
+          <Input
+            type="email"
+            value={form.notifyEmail}
+            onChange={(e) => set("notifyEmail", e.target.value)}
+            placeholder="tuemail@gmail.com"
+          />
+        </Field>
       </Card>
 
       <div className="flex justify-end">

@@ -4,6 +4,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { DELIVERY_VALUES, needsAddress } from "@/lib/delivery";
 import { deductStock } from "@/lib/stock";
+import { sendOrderNotification } from "@/lib/email";
 
 // Pedido por transferencia/WhatsApp. Crea la Orden en estado PENDING con un pago
 // "transfer" también PENDING; el vendedor la ve en /admin/pagos y la marca pagada
@@ -103,6 +104,22 @@ export async function createOrder(raw: unknown): Promise<CreateOrderResult> {
 
   // La orden nace PENDING (estado activo): reservamos el stock de una vez.
   await deductStock(order.id);
+
+  // Aviso por mail a la tienda (no bloquea ni falla si no hay SMTP configurado).
+  await sendOrderNotification({
+    number: order.number,
+    customerName: customer.name,
+    customerPhone: customer.phone,
+    customerEmail: customer.email,
+    deliveryZone: customer.deliveryZone,
+    shippingAddr: customer.addr,
+    total,
+    items: lines.map((l) => ({
+      nameSnapshot: l.nameSnapshot,
+      quantity: l.quantity,
+      lineTotal: l.lineTotal,
+    })),
+  });
 
   return { ok: true, orderId: order.id, orderNumber: order.number };
 }
