@@ -9,11 +9,11 @@ test("la tienda muestra el buscador y el rango de precio", async ({ page }) => {
 
 test("buscar por nombre mantiene el término en la URL y el input", async ({ page }) => {
   await page.goto("/tienda");
-  await page.getByLabel("Buscar productos").fill("anillo");
+  await page.getByLabel("Buscar productos").fill("dije");
   await page.getByRole("button", { name: "Filtrar" }).click();
 
-  await expect(page).toHaveURL(/[?&]q=anillo/);
-  await expect(page.getByLabel("Buscar productos")).toHaveValue("anillo");
+  await expect(page).toHaveURL(/[?&]q=dije/);
+  await expect(page.getByLabel("Buscar productos")).toHaveValue("dije");
   // Con filtros activos aparece el enlace para limpiar.
   await expect(page.getByRole("link", { name: /Limpiar/ })).toBeVisible();
 });
