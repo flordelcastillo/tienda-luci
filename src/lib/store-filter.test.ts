@@ -104,4 +104,16 @@ describe("buildStoreQuery", () => {
       "/tienda?cat=aros&sort=precio-desc",
     );
   });
+
+  it("no arrastra la página actual (cambiar de filtro resetea a la 1)", () => {
+    expect(buildStoreQuery({ cat: "aros", page: "3" })).toBe("/tienda?cat=aros");
+    expect(buildStoreQuery({ page: "5" }, { cat: "anillos" })).toBe("/tienda?cat=anillos");
+  });
+
+  it("agrega la página cuando viene como override y no es la 1", () => {
+    expect(buildStoreQuery({ cat: "aros" }, { page: "2" })).toBe(
+      "/tienda?cat=aros&page=2",
+    );
+    expect(buildStoreQuery({}, { page: "1" })).toBe("/tienda");
+  });
 });

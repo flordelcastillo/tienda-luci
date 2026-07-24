@@ -11,7 +11,9 @@ import {
   DEFAULT_SORT,
   type StoreParams,
 } from "@/lib/store-filter";
+import { parsePage, buildPagination } from "@/lib/pagination";
 import { SortSelect } from "@/components/SortSelect";
+import { Pagination } from "@/components/Pagination";
 
 export const dynamic = "force-dynamic";
 
@@ -31,10 +33,16 @@ export default async function TiendaPage({
   const params = await searchParams;
   const { cat = "", q = "", min = "", max = "", sort = DEFAULT_SORT } = params;
 
+  const where = buildStoreWhere(params);
+  const total = await prisma.product.count({ where });
+  const pagination = buildPagination(total, parsePage(params.page));
+
   const products = await prisma.product.findMany({
-    where: buildStoreWhere(params),
+    where,
     include: { images: { orderBy: { position: "asc" }, take: 1 }, category: true },
     orderBy: buildStoreOrderBy(sort),
+    skip: pagination.skip,
+    take: pagination.take,
   });
 
   const hasFilters = Boolean(q || min || max || cat || (sort && sort !== DEFAULT_SORT));
@@ -44,7 +52,7 @@ export default async function TiendaPage({
       <SiteHeader />
       <div className="mx-auto max-w-6xl px-6 py-10">
         <h1 className="font-display text-ink text-4xl">Tienda</h1>
-        <p className="text-muted mt-1">{products.length} piezas disponibles</p>
+        <p className="text-muted mt-1">{total} piezas disponibles</p>
 
         {/* Categorías: preservan la búsqueda y el rango de precio actuales */}
         <div className="mt-6 flex flex-wrap gap-2">
@@ -131,6 +139,12 @@ export default async function TiendaPage({
             No se encontraron piezas con esos filtros.
           </p>
         )}
+
+        <Pagination
+          params={params}
+          page={pagination.page}
+          totalPages={pagination.totalPages}
+        />
       </div>
       <SiteFooter />
     </>
