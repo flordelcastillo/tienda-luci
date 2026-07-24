@@ -28,7 +28,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const product = await getProduct(slug);
-  if (!product) return { title: "Producto no encontrado · Luci Joyas" };
+  if (!product) return { title: "Producto no encontrado · Teia accesorios" };
 
   const meta = buildProductMetadata({
     name: product.name,
