@@ -17,3 +17,12 @@ test("buscar por nombre mantiene el término en la URL y el input", async ({ pag
   // Con filtros activos aparece el enlace para limpiar.
   await expect(page.getByRole("link", { name: /Limpiar/ })).toBeVisible();
 });
+
+test("ordenar por precio queda reflejado en la URL y el select", async ({ page }) => {
+  await page.goto("/tienda");
+  await page.getByLabel("Ordenar por").selectOption("precio-asc");
+  await page.getByRole("button", { name: "Filtrar" }).click();
+
+  await expect(page).toHaveURL(/[?&]sort=precio-asc/);
+  await expect(page.getByLabel("Ordenar por")).toHaveValue("precio-asc");
+});

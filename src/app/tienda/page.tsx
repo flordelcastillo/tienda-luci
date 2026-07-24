@@ -4,7 +4,14 @@ import { prisma } from "@/lib/prisma";
 import { SiteHeader, SiteFooter } from "@/components/storefront";
 import { ProductCard } from "@/components/ProductCard";
 import { Button, Input } from "@/components/ui";
-import { buildStoreWhere, buildStoreQuery, type StoreParams } from "@/lib/store-filter";
+import {
+  buildStoreWhere,
+  buildStoreQuery,
+  buildStoreOrderBy,
+  SORT_OPTIONS,
+  DEFAULT_SORT,
+  type StoreParams,
+} from "@/lib/store-filter";
 
 export const dynamic = "force-dynamic";
 
@@ -22,15 +29,15 @@ export default async function TiendaPage({
   searchParams: Promise<StoreParams>;
 }) {
   const params = await searchParams;
-  const { cat = "", q = "", min = "", max = "" } = params;
+  const { cat = "", q = "", min = "", max = "", sort = DEFAULT_SORT } = params;
 
   const products = await prisma.product.findMany({
     where: buildStoreWhere(params),
     include: { images: { orderBy: { position: "asc" }, take: 1 }, category: true },
-    orderBy: { createdAt: "desc" },
+    orderBy: buildStoreOrderBy(sort),
   });
 
-  const hasFilters = Boolean(q || min || max || cat);
+  const hasFilters = Boolean(q || min || max || cat || (sort && sort !== DEFAULT_SORT));
 
   return (
     <>
@@ -92,6 +99,18 @@ export default async function TiendaPage({
             min={0}
             className="w-28"
           />
+          <select
+            name="sort"
+            defaultValue={sort}
+            aria-label="Ordenar por"
+            className="border-line text-ink focus-visible:ring-sage h-10 rounded-md border bg-white px-3 text-sm focus-visible:ring-2 focus-visible:outline-none"
+          >
+            {SORT_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
           <Button type="submit">Filtrar</Button>
           {hasFilters && (
             <Link
