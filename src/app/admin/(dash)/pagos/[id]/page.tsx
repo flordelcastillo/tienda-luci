@@ -5,6 +5,7 @@ import { formatARS } from "@/lib/money";
 import { Card } from "@/components/ui";
 import { OrderStatusBadge, PaymentStatusBadge } from "../StatusBadge";
 import { StatusControls } from "./StatusControls";
+import { deliveryLabel } from "@/lib/delivery";
 
 export const dynamic = "force-dynamic";
 
@@ -45,9 +46,10 @@ export default async function OrderDetailPage({
         <Card className="space-y-2 p-6">
           <h2 className="font-display text-ink mb-2 text-lg">Cliente</h2>
           <Info label="Nombre" value={order.customerName} />
-          <Info label="Email" value={order.customerEmail} />
+          <Info label="Email" value={order.customerEmail || "—"} />
           <Info label="Teléfono" value={order.customerPhone || "—"} />
-          <Info label="Envío" value={order.shippingAddr || "—"} />
+          <Info label="Entrega" value={deliveryLabel(order.deliveryZone)} />
+          <Info label="Dirección" value={order.shippingAddr || "—"} />
         </Card>
 
         <Card className="space-y-2 p-6">

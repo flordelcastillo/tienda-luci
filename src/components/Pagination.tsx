@@ -23,10 +23,7 @@ export function Pagination({
   const disabled = "pointer-events-none opacity-40";
 
   return (
-    <nav
-      className="mt-10 flex items-center justify-center gap-2"
-      aria-label="Paginación"
-    >
+    <nav className="mt-10 flex items-center justify-center gap-2" aria-label="Paginación">
       <Link
         href={linkTo(page - 1)}
         aria-label="Página anterior"

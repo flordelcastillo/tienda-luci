@@ -34,6 +34,17 @@ model Product {
   description String           @default("")
   material    String           @default("") // plata 925, oro 18k, acero
   gemstone    String           @default("") // piedra principal (opcional)
+  measurements   String        @default("") // medidas de la pieza (ej "Dije 1.2 cm · cadena 45 cm")
+  hypoallergenic Boolean       @default(true) // apto piel sensible (acero quirúrgico)
+  audience       String        @default("mujer") // mujer | hombre | ninos | unisex
+  metal          String        @default("") // plateado | dorado | oro-rosa
+  stoneColor     String        @default("") // color de circonia/piedra: rosa | cristal | verde | aurora | negro
+  waterproof     Boolean       @default(true) // apto agua / no se oxida
+  giftIdea       Boolean       @default(false) // aparece en "Ideas para regalar"
+  giftWrap       Boolean       @default(false) // se puede agregar cajita de regalo
+  theme          String        @default("") // tema para combos/sets: corazon | tulipan | gatito | mariposa | nudo
+  compareAtPrice Int? // precio ancla (centavos) tachado; null = sin descuento
+  reviews        Review[]
   basePrice   Int // precio base en centavos (ARS)
   active      Boolean          @default(true)
   featured    Boolean          @default(false)
@@ -56,6 +67,20 @@ model ProductImage {
   url       String
   alt       String  @default("")
   position  Int     @default(0)
+
+  @@index([productId])
+}
+
+// Reseña / prueba social de una clienta (se muestra en la ficha si approved).
+model Review {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  author    String
+  rating    Int      @default(5) // 1..5
+  text      String
+  approved  Boolean  @default(true)
+  createdAt DateTime @default(now())
 
   @@index([productId])
 }
@@ -98,15 +123,40 @@ model Order {
   customerEmail String
   customerPhone String      @default("")
   shippingAddr  String      @default("")
+  deliveryZone  String      @default("") // villa-mercedes | rio-cuarto | encuentro
   subtotal      Int // centavos
   shippingCost  Int         @default(0)
   total         Int
+  stockApplied  Boolean     @default(false) // si ya se descontó el stock de este pedido
   items         OrderItem[]
   payment       Payment?
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
   @@index([status])
+}
+
+// Configuración editable de la tienda desde el panel (marca, textos, colores,
+// contacto). Una sola fila con id fijo "main".
+model SiteSetting {
+  id                String   @id @default("main")
+  brandName         String   @default("Teia")
+  announcement      String   @default("")
+  heroKicker        String   @default("")
+  heroTitle         String   @default("")
+  heroSubtitle      String   @default("")
+  heroTagline       String   @default("")
+  heroImage         String   @default("")
+  footerText        String   @default("")
+  whatsapp          String   @default("")
+  freeShippingCents Int      @default(0)
+  colorPrimary      String   @default("") // hex → --sage
+  colorAccent       String   @default("") // hex → --gold
+  colorBg           String   @default("") // hex → --cream (fondo)
+  colorNeutral      String   @default("") // hex → --sand
+  colorRose         String   @default("") // hex → --rose
+  colorText         String   @default("") // hex → --ink (texto)
+  updatedAt         DateTime @updatedAt
 }
 
 model OrderItem {

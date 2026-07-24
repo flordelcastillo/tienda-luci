@@ -34,9 +34,7 @@ export function buildProductMetadata(p: ProductMetaInput): ProductMeta {
 
 function fallbackDescription(p: ProductMetaInput): string {
   const detalles = [p.material?.trim(), p.gemstone?.trim()].filter(Boolean);
-  const base = detalles.length
-    ? `${p.name} en ${detalles.join(" con ")}.`
-    : `${p.name}.`;
+  const base = detalles.length ? `${p.name} en ${detalles.join(" con ")}.` : `${p.name}.`;
   return truncate(`${base} ${formatARS(p.basePrice)} — ${SITE}.`, MAX_DESC);
 }
 

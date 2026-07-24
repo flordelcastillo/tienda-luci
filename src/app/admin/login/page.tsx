@@ -20,7 +20,7 @@ function LoginForm() {
       <form action={action} className="space-y-4">
         <input type="hidden" name="from" value={from} />
         <Field label="Email">
-          <Input name="email" type="email" placeholder="admin@luci.com" required />
+          <Input name="email" type="email" placeholder="admin@teia.com" required />
         </Field>
         <Field label="Contraseña">
           <Input name="password" type="password" placeholder="••••••••" required />

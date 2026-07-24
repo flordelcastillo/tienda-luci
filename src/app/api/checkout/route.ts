@@ -7,6 +7,7 @@ const schema = z.object({
   productId: z.string(),
   variantId: z.string(),
   quantity: z.number().int().positive(),
+  gift: z.boolean().default(false),
   customer: z.object({
     name: z.string().min(1),
     email: z.string().email(),
@@ -44,7 +45,8 @@ export async function POST(req: NextRequest) {
   const unitPrice = product.basePrice + variant.priceDelta;
   const lineTotal = unitPrice * input.quantity;
   const total = lineTotal + SHIPPING_COST;
-  const nameSnapshot = `${product.name} · ${variant.name}`;
+  const nameSnapshot =
+    `${product.name} · ${variant.name}` + (input.gift ? " · 🎁 con cajita de regalo" : "");
 
   // Crea la orden en estado PENDING con su pago asociado.
   const order = await prisma.order.create({

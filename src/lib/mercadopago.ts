@@ -48,7 +48,7 @@ export async function createPreference(input: CreatePreferenceInput) {
       },
       auto_return: "approved",
       notification_url: `${site}/api/mercadopago/webhook`,
-      statement_descriptor: "LUCI JOYAS",
+      statement_descriptor: "TEIA ACCESORIOS",
       metadata: { orderNumber: input.orderNumber },
     }),
   });

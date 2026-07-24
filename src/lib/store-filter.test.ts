@@ -1,9 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  buildStoreWhere,
-  buildStoreQuery,
-  buildStoreOrderBy,
-} from "./store-filter";
+import { buildStoreWhere, buildStoreQuery, buildStoreOrderBy } from "./store-filter";
 
 describe("buildStoreWhere", () => {
   it("sin filtros solo trae productos activos", () => {
@@ -49,6 +45,32 @@ describe("buildStoreWhere", () => {
       name: { contains: "oro", mode: "insensitive" },
       basePrice: { gte: 200000 },
     });
+  });
+
+  it("filtra por destinatario incluyendo siempre las piezas unisex", () => {
+    expect(buildStoreWhere({ aud: "hombre" }).audience).toEqual({
+      in: ["hombre", "unisex"],
+    });
+  });
+
+  it("ignora el destinatario vacío o con solo espacios", () => {
+    expect(buildStoreWhere({ aud: "   " }).audience).toBeUndefined();
+  });
+
+  it("filtra por metal y color de piedra", () => {
+    const where = buildStoreWhere({ metal: "dorado", color: "rosa" });
+    expect(where.metal).toBe("dorado");
+    expect(where.stoneColor).toBe("rosa");
+  });
+
+  it("aplica los toggles de apto agua e ideas para regalar solo con valor '1'", () => {
+    expect(buildStoreWhere({ agua: "1", regalo: "1" })).toMatchObject({
+      waterproof: true,
+      giftIdea: true,
+    });
+    const off = buildStoreWhere({ agua: "0", regalo: "" });
+    expect(off.waterproof).toBeUndefined();
+    expect(off.giftIdea).toBeUndefined();
   });
 });
 
@@ -107,7 +129,9 @@ describe("buildStoreQuery", () => {
 
   it("no arrastra la página actual (cambiar de filtro resetea a la 1)", () => {
     expect(buildStoreQuery({ cat: "aros", page: "3" })).toBe("/tienda?cat=aros");
-    expect(buildStoreQuery({ page: "5" }, { cat: "anillos" })).toBe("/tienda?cat=anillos");
+    expect(buildStoreQuery({ page: "5" }, { cat: "anillos" })).toBe(
+      "/tienda?cat=anillos",
+    );
   });
 
   it("agrega la página cuando viene como override y no es la 1", () => {

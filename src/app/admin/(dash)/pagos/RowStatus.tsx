@@ -3,23 +3,21 @@
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Button } from "@/components/ui";
-import { updateOrderStatus } from "../actions";
-import { ORDER_LABELS } from "../StatusBadge";
+import { Select } from "@/components/ui";
+import { updateOrderStatus } from "./actions";
+import { ORDER_LABELS } from "./StatusBadge";
 import type { OrderStatus } from "@/generated/prisma/enums";
 
-const ACTIONS: {
-  status: OrderStatus;
-  label: string;
-  variant: "primary" | "gold" | "outline" | "danger";
-}[] = [
-  { status: "PAID", label: "Marcar pagado", variant: "primary" },
-  { status: "FULFILLED", label: "Marcar enviado", variant: "gold" },
-  { status: "CANCELLED", label: "Cancelar", variant: "danger" },
-  { status: "REFUNDED", label: "Reembolsar", variant: "outline" },
+const OPTIONS: OrderStatus[] = [
+  "PENDING",
+  "PAID",
+  "FULFILLED",
+  "CANCELLED",
+  "REFUNDED",
 ];
 
-export function StatusControls({
+// Cambio de estado directo desde la lista de pedidos, sin entrar al detalle.
+export function RowStatus({
   orderId,
   current,
 }: {
@@ -29,7 +27,9 @@ export function StatusControls({
   const [pending, start] = useTransition();
   const router = useRouter();
 
-  function set(status: OrderStatus) {
+  function onChange(status: OrderStatus) {
+    if (status === current) return;
+    // Al cancelar o reembolsar, preguntar si se devuelve el stock al inventario.
     let restore: boolean | undefined;
     if (status === "CANCELLED" || status === "REFUNDED") {
       restore = window.confirm(
@@ -48,17 +48,18 @@ export function StatusControls({
   }
 
   return (
-    <div className="flex flex-wrap gap-2">
-      {ACTIONS.map((a) => (
-        <Button
-          key={a.status}
-          variant={a.variant}
-          disabled={pending || current === a.status}
-          onClick={() => set(a.status)}
-        >
-          {a.label}
-        </Button>
+    <Select
+      value={current}
+      disabled={pending}
+      onChange={(e) => onChange(e.target.value as OrderStatus)}
+      className="w-36 py-1.5 text-sm"
+      aria-label="Cambiar estado del pedido"
+    >
+      {OPTIONS.map((s) => (
+        <option key={s} value={s}>
+          {ORDER_LABELS[s]?.label ?? s}
+        </option>
       ))}
-    </div>
+    </Select>
   );
 }

@@ -7,9 +7,22 @@ export type StoreParams = {
   q?: string;
   min?: string; // en pesos (texto del input)
   max?: string; // en pesos
+  aud?: string; // destinatario: mujer | hombre | ninos
+  metal?: string; // plateado | dorado | oro-rosa
+  color?: string; // color de piedra: rosa | cristal | aurora | verde | negro
+  agua?: string; // "1" → solo aptos para agua
+  regalo?: string; // "1" → solo ideas para regalar
   sort?: string; // clave de ordenamiento (ver SORT_OPTIONS)
   page?: string; // número de página (1-based)
 };
+
+// Destinatarios visibles en el filtro. Los productos "unisex" aparecen en todos.
+export const AUDIENCE_OPTIONS = [
+  { value: "", label: "Todos" },
+  { value: "mujer", label: "Mujer" },
+  { value: "hombre", label: "Hombre" },
+  { value: "ninos", label: "Niños" },
+] as const;
 
 // Opciones de ordenamiento visibles en la tienda. El primero es el default.
 export const SORT_OPTIONS = [
@@ -33,6 +46,15 @@ export function buildStoreWhere(params: StoreParams): Prisma.ProductWhereInput {
   const q = params.q?.trim();
   if (q) where.name = { contains: q, mode: "insensitive" };
 
+  // Destinatario: incluye siempre las piezas "unisex" en cualquier filtro concreto.
+  const aud = params.aud?.trim();
+  if (aud) where.audience = { in: [aud, "unisex"] };
+
+  if (params.metal?.trim()) where.metal = params.metal.trim();
+  if (params.color?.trim()) where.stoneColor = params.color.trim();
+  if (params.agua === "1") where.waterproof = true;
+  if (params.regalo === "1") where.giftIdea = true;
+
   const price: Prisma.IntFilter = {};
   if (params.min?.trim()) price.gte = pesosToCents(params.min);
   if (params.max?.trim()) price.lte = pesosToCents(params.max);
@@ -43,9 +65,7 @@ export function buildStoreWhere(params: StoreParams): Prisma.ProductWhereInput {
 
 // Traduce la clave de ordenamiento (de la URL) al `orderBy` de Prisma.
 // Cualquier valor desconocido o vacío cae en el orden por defecto (más nuevos).
-export function buildStoreOrderBy(
-  sort?: string,
-): Prisma.ProductOrderByWithRelationInput {
+export function buildStoreOrderBy(sort?: string): Prisma.ProductOrderByWithRelationInput {
   switch (sort) {
     case "precio-asc":
       return { basePrice: "asc" };
@@ -66,7 +86,17 @@ export function buildStoreQuery(
 ): string {
   const merged = { ...current, ...overrides };
   const sp = new URLSearchParams();
-  for (const key of ["cat", "q", "min", "max"] as const) {
+  for (const key of [
+    "cat",
+    "q",
+    "min",
+    "max",
+    "aud",
+    "metal",
+    "color",
+    "agua",
+    "regalo",
+  ] as const) {
     const value = merged[key]?.trim();
     if (value) sp.set(key, value);
   }

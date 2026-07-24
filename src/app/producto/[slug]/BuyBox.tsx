@@ -1,22 +1,43 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { ShoppingBag } from "lucide-react";
+import { toast } from "sonner";
 import { Button, Field, Input } from "@/components/ui";
 import { formatARS } from "@/lib/money";
+import { addToCart } from "@/lib/cart";
+
+// Mercado Pago quedó integrado pero desactivado (se cobra por transferencia y el
+// pedido se cierra por WhatsApp). Poner en true para volver a mostrar el pago
+// online — el resto del flujo (/api/checkout, webhook) sigue intacto.
+const SHOW_MERCADOPAGO = false;
 
 type Variant = { id: string; name: string; priceDelta: number; stock: number };
 
 export function BuyBox({
   productId,
+  productName,
+  slug,
+  image,
   basePrice,
+  compareAtPrice,
+  giftWrap,
   variants,
 }: {
   productId: string;
+  productName: string;
+  slug: string;
+  image: string;
   basePrice: number;
+  compareAtPrice?: number | null;
+  giftWrap?: boolean;
   variants: Variant[];
 }) {
+  const router = useRouter();
   const [variantId, setVariantId] = useState(variants[0]?.id ?? "");
   const [qty, setQty] = useState(1);
+  const [gift, setGift] = useState(false);
   const [step, setStep] = useState<"pick" | "data">("pick");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -29,6 +50,28 @@ export function BuyBox({
   const price = basePrice + (variant?.priceDelta ?? 0);
   const total = price * qty;
   const maxQty = variant?.stock ?? 0;
+
+  // Descuento respecto al precio ancla (solo si es mayor al precio actual).
+  const hasDiscount = !!compareAtPrice && compareAtPrice > price;
+  const discountPct = hasDiscount ? Math.round((1 - price / compareAtPrice!) * 100) : 0;
+
+  function handleAddToCart() {
+    addToCart({
+      productId,
+      variantId: variant?.id ?? "",
+      slug,
+      name: productName,
+      variantName: variants.length > 1 ? (variant?.name ?? "") : "",
+      unitPrice: price,
+      image,
+      gift,
+      qty,
+    });
+    toast.success("Agregado al carrito", {
+      description: `${productName}${gift ? " · con cajita de regalo" : ""} ×${qty}`,
+      action: { label: "Ver carrito", onClick: () => router.push("/carrito") },
+    });
+  }
 
   async function checkout() {
     setError(null);
@@ -45,6 +88,7 @@ export function BuyBox({
           productId,
           variantId,
           quantity: qty,
+          gift,
           customer: { name, email, phone, addr },
         }),
       });
@@ -59,8 +103,18 @@ export function BuyBox({
 
   return (
     <div className="space-y-5">
-      <div>
+      <div className="flex flex-wrap items-center gap-3">
         <span className="font-display text-sage text-3xl">{formatARS(price)}</span>
+        {hasDiscount && (
+          <>
+            <span className="text-muted text-lg line-through">
+              {formatARS(compareAtPrice!)}
+            </span>
+            <span className="bg-rose text-ink rounded-full px-2 py-0.5 text-xs font-medium">
+              -{discountPct}%
+            </span>
+          </>
+        )}
       </div>
 
       {variants.length > 1 && (
@@ -109,13 +163,40 @@ export function BuyBox({
             </div>
             <span className="text-muted text-sm">Total: {formatARS(total)}</span>
           </div>
+
+          {giftWrap && (
+            <label className="text-ink flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={gift}
+                onChange={(e) => setGift(e.target.checked)}
+                className="h-4 w-4 accent-[var(--gold)]"
+              />
+              🎁 Sumar cajita de regalo
+            </label>
+          )}
+
           <Button
             className="w-full"
+            size="lg"
             disabled={maxQty === 0}
-            onClick={() => setStep("data")}
+            onClick={handleAddToCart}
           >
-            {maxQty === 0 ? "Sin stock" : "Comprar ahora"}
+            <ShoppingBag className="size-5" />
+            {maxQty === 0 ? "Sin stock" : "Agregar al carrito"}
           </Button>
+          {maxQty > 0 && (
+            <p className="text-muted text-center text-xs">
+              Sumá las piezas que quieras y finalizás el pedido por WhatsApp,
+              coordinando el pago por transferencia.
+            </p>
+          )}
+
+          {SHOW_MERCADOPAGO && maxQty > 0 && (
+            <Button variant="ghost" className="w-full" onClick={() => setStep("data")}>
+              Pagar con tarjeta (Mercado Pago)
+            </Button>
+          )}
         </div>
       ) : (
         <div className="space-y-3">

@@ -5,6 +5,12 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button, Card, Field, Input, Textarea, Select } from "@/components/ui";
 import { centsToPesos } from "@/lib/money";
+import {
+  METAL_OPTIONS,
+  STONE_COLOR_OPTIONS,
+  THEME_OPTIONS,
+  type Option,
+} from "@/lib/product-attributes";
 
 type Category = { id: string; name: string };
 type ImageItem = { url: string; alt: string };
@@ -23,9 +29,20 @@ export type ProductInitial = {
   material: string;
   gemstone: string;
   basePrice: string; // en pesos
+  compareAtPrice: string; // en pesos, precio ancla tachado ("" = sin descuento)
   categoryId: string;
   active: boolean;
   featured: boolean;
+  // Atributos de marketing / filtrado
+  metal: string;
+  stoneColor: string;
+  theme: string;
+  waterproof: boolean;
+  hypoallergenic: boolean;
+  giftIdea: boolean;
+  giftWrap: boolean;
+  measurements: string;
+  audience: string;
   images: ImageItem[];
   variants: Variant[];
 };
@@ -36,9 +53,19 @@ const empty: ProductInitial = {
   material: "",
   gemstone: "",
   basePrice: "",
+  compareAtPrice: "",
   categoryId: "",
   active: true,
   featured: false,
+  metal: "",
+  stoneColor: "",
+  theme: "",
+  waterproof: true,
+  hypoallergenic: true,
+  giftIdea: false,
+  giftWrap: false,
+  measurements: "",
+  audience: "mujer",
   images: [],
   variants: [{ name: "Único", sku: "", priceDelta: "0", stock: "0" }],
 };
@@ -125,9 +152,19 @@ export function ProductForm({
       material: form.material,
       gemstone: form.gemstone,
       basePrice: form.basePrice,
+      compareAtPrice: form.compareAtPrice,
       categoryId: form.categoryId || null,
       active: form.active,
       featured: form.featured,
+      metal: form.metal,
+      stoneColor: form.stoneColor,
+      theme: form.theme,
+      waterproof: form.waterproof,
+      hypoallergenic: form.hypoallergenic,
+      giftIdea: form.giftIdea,
+      giftWrap: form.giftWrap,
+      measurements: form.measurements,
+      audience: form.audience,
       images: form.images,
       variants: form.variants,
     };
@@ -178,6 +215,69 @@ export function ProductForm({
                   placeholder="Circonita"
                 />
               </Field>
+            </div>
+          </Card>
+
+          {/* Atributos y filtros */}
+          <Card className="space-y-4 p-6">
+            <h2 className="font-display text-ink text-xl">Atributos y filtros</h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <AttributeSelect
+                label="Metal"
+                value={form.metal}
+                options={METAL_OPTIONS}
+                onChange={(v) => set("metal", v)}
+              />
+              <AttributeSelect
+                label="Color de piedra"
+                value={form.stoneColor}
+                options={STONE_COLOR_OPTIONS}
+                onChange={(v) => set("stoneColor", v)}
+              />
+              <AttributeSelect
+                label="Tema (para combos)"
+                value={form.theme}
+                options={THEME_OPTIONS}
+                onChange={(v) => set("theme", v)}
+              />
+              <Field label="Destinatario">
+                <Select
+                  value={form.audience}
+                  onChange={(e) => set("audience", e.target.value)}
+                >
+                  <option value="mujer">Mujer</option>
+                  <option value="hombre">Hombre</option>
+                  <option value="ninos">Niños</option>
+                  <option value="unisex">Unisex</option>
+                </Select>
+              </Field>
+            </div>
+            <Field label="Medidas" hint="Ej: Dije 1.2 cm · cadena 45 cm">
+              <Input
+                value={form.measurements}
+                onChange={(e) => set("measurements", e.target.value)}
+                placeholder="Dije 1.2 cm · cadena 45 cm"
+              />
+            </Field>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {(
+                [
+                  { key: "waterproof", label: "Apto agua / no se oxida" },
+                  { key: "hypoallergenic", label: "Hipoalergénico" },
+                  { key: "giftIdea", label: "Idea para regalar" },
+                  { key: "giftWrap", label: "Cajita de regalo disponible" },
+                ] as const
+              ).map((c) => (
+                <label key={c.key} className="text-ink flex items-center gap-3 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={form[c.key]}
+                    onChange={(e) => set(c.key, e.target.checked)}
+                    className="h-4 w-4 accent-[var(--sage)]"
+                  />
+                  {c.label}
+                </label>
+              ))}
             </div>
           </Card>
 
@@ -300,6 +400,16 @@ export function ProductForm({
                 placeholder="45000"
               />
             </Field>
+            <Field
+              label="Precio ancla (opcional)"
+              hint="Precio anterior tachado. Dejalo vacío si no hay descuento."
+            >
+              <Input
+                value={form.compareAtPrice}
+                onChange={(e) => set("compareAtPrice", e.target.value)}
+                placeholder="60000"
+              />
+            </Field>
             <Field label="Categoría">
               <Select
                 value={form.categoryId}
@@ -362,3 +472,57 @@ export function ProductForm({
 }
 
 export { centsToPesos };
+
+// Selector de atributo con opción "Otro (a definir)": si el valor guardado no
+// está entre las opciones conocidas, se edita como texto libre.
+const OTHER = "__otro__";
+
+function AttributeSelect({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: Option[];
+  onChange: (value: string) => void;
+}) {
+  const known = options.some((o) => o.value === value);
+  const [forceOther, setForceOther] = useState(value !== "" && !known);
+  const isOther = forceOther || (value !== "" && !known);
+
+  return (
+    <Field label={label} hint={isOther ? "Valor personalizado" : undefined}>
+      <Select
+        value={isOther ? OTHER : value}
+        onChange={(e) => {
+          const v = e.target.value;
+          if (v === OTHER) {
+            setForceOther(true);
+            onChange("");
+          } else {
+            setForceOther(false);
+            onChange(v);
+          }
+        }}
+      >
+        <option value="">—</option>
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+        <option value={OTHER}>Otro (a definir)…</option>
+      </Select>
+      {isOther && (
+        <Input
+          className="mt-2"
+          value={value}
+          placeholder="Escribí el valor"
+          onChange={(e) => onChange(e.target.value)}
+        />
+      )}
+    </Field>
+  );
+}

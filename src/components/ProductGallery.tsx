@@ -39,7 +39,7 @@ export function ProductGallery({
               aria-label={`Ver imagen ${i + 1} de ${name}`}
               aria-current={i === active}
               className={`bg-sand aspect-square overflow-hidden rounded-xl border-2 transition-colors ${
-                i === active ? "border-sage" : "border-transparent hover:border-line"
+                i === active ? "border-sage" : "hover:border-line border-transparent"
               }`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}

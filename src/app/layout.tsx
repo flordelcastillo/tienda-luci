@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import { Toaster } from "sonner";
+import { getSettings } from "@/lib/settings";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -21,16 +22,27 @@ export const metadata: Metadata = {
     "Accesorios en acero quirúrgico — dijes, aros y más. No se oxidan ni manchan la piel.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { colorPrimary, colorAccent, colorBg, colorNeutral, colorRose, colorText } =
+    await getSettings();
+
   return (
     <html
       lang="es"
       className={`${playfair.variable} ${inter.variable} h-full antialiased`}
     >
+      <head>
+        {/* Colores de marca editables desde el panel de administración. */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `:root{--sage:${colorPrimary};--gold:${colorAccent};--cream:${colorBg};--sand:${colorNeutral};--rose:${colorRose};--ink:${colorText};}`,
+          }}
+        />
+      </head>
       <body className="flex min-h-full flex-col">
         {children}
         <Toaster
