@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { buildStoreWhere, buildStoreQuery } from "./store-filter";
+import {
+  buildStoreWhere,
+  buildStoreQuery,
+  buildStoreOrderBy,
+} from "./store-filter";
 
 describe("buildStoreWhere", () => {
   it("sin filtros solo trae productos activos", () => {
@@ -48,6 +52,25 @@ describe("buildStoreWhere", () => {
   });
 });
 
+describe("buildStoreOrderBy", () => {
+  it("sin valor ordena por más nuevos", () => {
+    expect(buildStoreOrderBy()).toEqual({ createdAt: "desc" });
+  });
+
+  it("valor desconocido cae en el default", () => {
+    expect(buildStoreOrderBy("cualquiera")).toEqual({ createdAt: "desc" });
+  });
+
+  it("ordena por precio ascendente y descendente", () => {
+    expect(buildStoreOrderBy("precio-asc")).toEqual({ basePrice: "asc" });
+    expect(buildStoreOrderBy("precio-desc")).toEqual({ basePrice: "desc" });
+  });
+
+  it("ordena por nombre A-Z", () => {
+    expect(buildStoreOrderBy("nombre")).toEqual({ name: "asc" });
+  });
+});
+
 describe("buildStoreQuery", () => {
   it("sin filtros devuelve la ruta limpia", () => {
     expect(buildStoreQuery({})).toBe("/tienda");
@@ -65,5 +88,20 @@ describe("buildStoreQuery", () => {
 
   it("un override vacío quita el parámetro", () => {
     expect(buildStoreQuery({ q: "oro", cat: "aros" }, { cat: "" })).toBe("/tienda?q=oro");
+  });
+
+  it("agrega el orden cuando no es el default", () => {
+    expect(buildStoreQuery({ sort: "precio-asc" })).toBe("/tienda?sort=precio-asc");
+  });
+
+  it("omite el orden por defecto para mantener la URL limpia", () => {
+    expect(buildStoreQuery({ sort: "nuevos" })).toBe("/tienda");
+    expect(buildStoreQuery({ q: "oro", sort: "nuevos" })).toBe("/tienda?q=oro");
+  });
+
+  it("preserva el orden junto con otros filtros", () => {
+    expect(buildStoreQuery({ cat: "aros", sort: "precio-desc" })).toBe(
+      "/tienda?cat=aros&sort=precio-desc",
+    );
   });
 });
