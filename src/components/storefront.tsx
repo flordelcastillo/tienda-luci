@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { CartLink } from "@/components/CartLink";
 import { getSettings } from "@/lib/settings";
@@ -7,8 +8,15 @@ export async function SiteHeader() {
   return (
     <header className="bg-cream/85 border-line sticky top-0 z-40 border-b backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-        <Link href="/" className="font-display text-sage text-2xl tracking-tight">
-          {brandName}
+        <Link href="/" className="shrink-0">
+          <Image
+            src="/logo-teia.png"
+            alt={brandName}
+            width={407}
+            height={213}
+            priority
+            className="h-12 w-auto"
+          />
         </Link>
         <nav className="text-ink hidden items-center gap-8 text-sm sm:flex">
           <Link href="/tienda" className="hover:text-sage">
@@ -44,7 +52,13 @@ export async function SiteFooter() {
     <footer className="border-line mt-24 border-t bg-white">
       <div className="mx-auto grid max-w-6xl gap-8 px-6 py-12 sm:grid-cols-3">
         <div>
-          <p className="font-display text-sage text-2xl">{brandName}</p>
+          <Image
+            src="/logo-teia.png"
+            alt={brandName}
+            width={407}
+            height={213}
+            className="h-16 w-auto"
+          />
           <p className="text-muted mt-2 max-w-xs text-sm">{footerText}</p>
         </div>
         <div className="space-y-2 text-sm">

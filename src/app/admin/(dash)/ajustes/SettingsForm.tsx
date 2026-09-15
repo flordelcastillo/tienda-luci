@@ -156,7 +156,7 @@ export function SettingsForm({ initial }: { initial: Initial }) {
         <div className="grid gap-4 sm:grid-cols-2">
           <Field
             label="WhatsApp (formato internacional sin +)"
-            hint="Ej: 5492657528266"
+            hint="Ej: 5492657502410"
           >
             <Input value={form.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} />
           </Field>

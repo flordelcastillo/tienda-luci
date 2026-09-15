@@ -14,7 +14,7 @@ export const SETTINGS_DEFAULTS = {
   heroImage: "",
   footerText:
     "Accesorios en acero quirúrgico. Piezas delicadas que no se oxidan, pensadas para acompañarte todos los días.",
-  whatsapp: "5492657528266",
+  whatsapp: "5492657502410",
   notifyEmail: "",
   freeShippingCents: 3000000,
   colorPrimary: "#3b4a3f",
