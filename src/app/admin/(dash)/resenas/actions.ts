@@ -21,9 +21,12 @@ async function requireSession() {
 export async function addReview(raw: unknown) {
   if (!(await requireSession())) return { error: "No autorizado" };
   const parsed = addSchema.safeParse(raw);
-  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Datos inválidos" };
+  if (!parsed.success)
+    return { error: parsed.error.issues[0]?.message ?? "Datos inválidos" };
 
-  const product = await prisma.product.findUnique({ where: { id: parsed.data.productId } });
+  const product = await prisma.product.findUnique({
+    where: { id: parsed.data.productId },
+  });
   if (!product) return { error: "Producto no encontrado" };
 
   await prisma.review.create({ data: parsed.data });

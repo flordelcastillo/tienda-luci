@@ -40,7 +40,6 @@ export default async function EditarProductoPage({
     metal: product.metal,
     stoneColor: product.stoneColor,
     theme: product.theme,
-    waterproof: product.waterproof,
     hypoallergenic: product.hypoallergenic,
     giftIdea: product.giftIdea,
     giftWrap: product.giftWrap,

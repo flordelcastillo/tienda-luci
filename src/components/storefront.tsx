@@ -70,7 +70,7 @@ export async function SiteHeader() {
               Contacto
             </a>
           </nav>
-          <div className="flex items-center justify-self-end gap-5">
+          <div className="flex items-center gap-5 justify-self-end">
             <CartLink />
             <Link
               href="/tienda"
@@ -80,6 +80,26 @@ export async function SiteHeader() {
             </Link>
           </div>
         </div>
+        {/* Navegación en celular: fila deslizable */}
+        <nav className="border-line text-ink flex gap-6 overflow-x-auto border-t px-6 py-2 text-sm md:hidden">
+          <Link href="/" className="shrink-0">
+            Inicio
+          </Link>
+          <Link href="/tienda" className="shrink-0">
+            Tienda
+          </Link>
+          <Link href="/guia-de-talles" className="shrink-0">
+            Guía de talles
+          </Link>
+          <a
+            href={`https://wa.me/${whatsapp}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0"
+          >
+            Contacto
+          </a>
+        </nav>
       </header>
     </>
   );
@@ -119,9 +139,6 @@ export async function SiteFooter() {
           </Link>
           <p className="text-muted">Envíos a todo el país</p>
           <p className="text-muted">Pago por transferencia</p>
-          <Link href="/admin" className="text-muted hover:text-sage block">
-            Acceso administración
-          </Link>
         </div>
       </div>
       <div className="border-line text-muted border-t py-4 text-center text-xs">

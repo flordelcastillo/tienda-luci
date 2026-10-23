@@ -37,7 +37,6 @@ export type ProductInitial = {
   metal: string;
   stoneColor: string;
   theme: string;
-  waterproof: boolean;
   hypoallergenic: boolean;
   giftIdea: boolean;
   giftWrap: boolean;
@@ -60,7 +59,6 @@ const empty: ProductInitial = {
   metal: "",
   stoneColor: "",
   theme: "",
-  waterproof: true,
   hypoallergenic: true,
   giftIdea: false,
   giftWrap: false,
@@ -159,7 +157,6 @@ export function ProductForm({
       metal: form.metal,
       stoneColor: form.stoneColor,
       theme: form.theme,
-      waterproof: form.waterproof,
       hypoallergenic: form.hypoallergenic,
       giftIdea: form.giftIdea,
       giftWrap: form.giftWrap,
@@ -262,7 +259,6 @@ export function ProductForm({
             <div className="grid gap-2 sm:grid-cols-2">
               {(
                 [
-                  { key: "waterproof", label: "Apto agua / no se oxida" },
                   { key: "hypoallergenic", label: "Hipoalergénico" },
                   { key: "giftIdea", label: "Idea para regalar" },
                   { key: "giftWrap", label: "Cajita de regalo disponible" },

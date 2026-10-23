@@ -7,13 +7,6 @@ import { getSettings } from "@/lib/settings";
 
 export const dynamic = "force-dynamic";
 
-const CATEGORIES = [
-  { slug: "collares", name: "Collares" },
-  { slug: "aros", name: "Aros" },
-  { slug: "anillos", name: "Anillos" },
-  { slug: "pulseras", name: "Pulseras" },
-];
-
 const productInclude = {
   images: { orderBy: { position: "asc" as const }, take: 1 },
   category: true,
@@ -42,7 +35,6 @@ function Grid({ products }: { products: HomeProduct[] }) {
             name={p.name}
             price={p.basePrice}
             compareAtPrice={p.compareAtPrice}
-            waterproof={p.waterproof}
             image={p.images[0]?.url}
             category={p.category?.name}
             quickAdd={
@@ -67,7 +59,7 @@ function Grid({ products }: { products: HomeProduct[] }) {
 }
 
 export default async function HomePage() {
-  const [latest, featured, s, categoryImages] = await Promise.all([
+  const [latest, featured, s, homeCategories] = await Promise.all([
     getLatest(),
     prisma.product.findMany({
       where: { active: true, featured: true },
@@ -76,16 +68,24 @@ export default async function HomePage() {
       take: 8,
     }),
     getSettings(),
-    // Foto representativa de cada categoría: la del producto más nuevo.
-    Promise.all(
-      CATEGORIES.map((c) =>
-        prisma.product.findFirst({
-          where: { active: true, category: { slug: c.slug } },
+    // Tarjetas de categoría: las edita el administrador. Sin foto propia usan la
+    // del último producto de la categoría.
+    prisma.category.findMany({
+      where: { showOnHome: true },
+      orderBy: [{ position: "asc" }, { name: "asc" }],
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        image: true,
+        products: {
+          where: { active: true },
           orderBy: { createdAt: "desc" },
+          take: 1,
           select: { images: { orderBy: { position: "asc" }, take: 1 } },
-        }),
-      ),
-    ),
+        },
+      },
+    }),
   ]);
 
   // "Destacados" sólo si aporta productos que no estén ya en Novedades.
@@ -149,16 +149,15 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Categorías con foto */}
-      <section className="mx-auto w-full max-w-6xl px-6 pt-6">
-        <div className="flex flex-wrap justify-center gap-3">
-          {CATEGORIES.map((c, i) => ({ ...c, img: categoryImages[i]?.images[0]?.url }))
-            .filter((c) => c.img)
-            .map((c) => {
-              const img = c.img;
+      {/* Categorías con foto (se editan en Admin > Categorías) */}
+      {homeCategories.length > 0 && (
+        <section className="mx-auto w-full max-w-6xl px-6 pt-6">
+          <div className="flex flex-wrap justify-center gap-3">
+            {homeCategories.map((c) => {
+              const img = c.image || c.products[0]?.images[0]?.url;
               return (
                 <Link
-                  key={c.slug}
+                  key={c.id}
                   href={`/tienda?cat=${c.slug}`}
                   className="group bg-rose-soft relative aspect-[4/5] w-[calc(50%-6px)] overflow-hidden rounded-xl sm:w-[calc(25%-9px)]"
                 >
@@ -179,8 +178,9 @@ export default async function HomePage() {
                 </Link>
               );
             })}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       {/* Novedades */}
       <section className="mx-auto mt-16 w-full max-w-6xl px-6">

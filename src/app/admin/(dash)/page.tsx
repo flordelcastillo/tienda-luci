@@ -12,39 +12,47 @@ function daysSince(date: Date): number {
 }
 
 export default async function DashboardPage() {
-  const [productCount, activeCount, lowStock, recentOrders, paidAgg, pending, products, soldOrders] =
-    await Promise.all([
-      prisma.product.count(),
-      prisma.product.count({ where: { active: true } }),
-      prisma.productVariant.findMany({
-        where: { stock: { lte: 3 } },
-        include: { product: true },
-        orderBy: { stock: "asc" },
-        take: 8,
-      }),
-      prisma.order.findMany({ orderBy: { createdAt: "desc" }, take: 5 }),
-      prisma.order.aggregate({
-        where: { status: { in: ["PAID", "FULFILLED"] } },
-        _sum: { total: true },
-      }),
-      prisma.order.count({ where: { status: "PENDING" } }),
-      prisma.product.findMany({
-        where: { active: true },
-        include: {
-          images: { orderBy: { position: "asc" }, take: 1 },
-          variants: { select: { stock: true } },
-        },
-      }),
-      // Órdenes reales (pagadas/enviadas) para calcular ventas y movimiento.
-      prisma.order.findMany({
-        where: { status: { in: ["PAID", "FULFILLED"] } },
-        select: {
-          createdAt: true,
-          total: true,
-          items: { select: { productId: true, quantity: true } },
-        },
-      }),
-    ]);
+  const [
+    productCount,
+    activeCount,
+    lowStock,
+    recentOrders,
+    paidAgg,
+    pending,
+    products,
+    soldOrders,
+  ] = await Promise.all([
+    prisma.product.count(),
+    prisma.product.count({ where: { active: true } }),
+    prisma.productVariant.findMany({
+      where: { stock: { lte: 3 } },
+      include: { product: true },
+      orderBy: { stock: "asc" },
+      take: 8,
+    }),
+    prisma.order.findMany({ orderBy: { createdAt: "desc" }, take: 5 }),
+    prisma.order.aggregate({
+      where: { status: { in: ["PAID", "FULFILLED"] } },
+      _sum: { total: true },
+    }),
+    prisma.order.count({ where: { status: "PENDING" } }),
+    prisma.product.findMany({
+      where: { active: true },
+      include: {
+        images: { orderBy: { position: "asc" }, take: 1 },
+        variants: { select: { stock: true } },
+      },
+    }),
+    // Órdenes reales (pagadas/enviadas) para calcular ventas y movimiento.
+    prisma.order.findMany({
+      where: { status: { in: ["PAID", "FULFILLED"] } },
+      select: {
+        createdAt: true,
+        total: true,
+        items: { select: { productId: true, quantity: true } },
+      },
+    }),
+  ]);
 
   const revenue = paidAgg._sum.total ?? 0;
 
@@ -137,7 +145,10 @@ export default async function DashboardPage() {
         </p>
         <div className="flex h-48 items-end gap-3">
           {months.map((m) => (
-            <div key={`${m.year}-${m.month}`} className="flex flex-1 flex-col items-center gap-2">
+            <div
+              key={`${m.year}-${m.month}`}
+              className="flex flex-1 flex-col items-center gap-2"
+            >
               <span className="text-muted text-[11px]">
                 {m.total > 0 ? formatARS(m.total) : ""}
               </span>
@@ -155,7 +166,9 @@ export default async function DashboardPage() {
       {/* Productos para poner en oferta */}
       <Card className="p-6">
         <div className="mb-1 flex items-center justify-between">
-          <h2 className="font-display text-ink text-xl">Productos para poner en oferta</h2>
+          <h2 className="font-display text-ink text-xl">
+            Productos para poner en oferta
+          </h2>
           <Link href="/admin/productos" className="text-sage text-sm hover:underline">
             Ver productos →
           </Link>
@@ -197,14 +210,18 @@ export default async function DashboardPage() {
                     </td>
                     <td className="py-3 text-center text-sm">
                       {p.lastSold ? (
-                        <span className="text-muted">hace {daysSince(p.lastSold)} días</span>
+                        <span className="text-muted">
+                          hace {daysSince(p.lastSold)} días
+                        </span>
                       ) : (
                         <Badge tone="gold">Nunca</Badge>
                       )}
                     </td>
                     <td className="text-muted py-3 text-center text-sm">{p.units}</td>
                     <td className="py-3 text-center text-sm">{p.stock}</td>
-                    <td className="text-ink py-3 text-right text-sm">{formatARS(p.price)}</td>
+                    <td className="text-ink py-3 text-right text-sm">
+                      {formatARS(p.price)}
+                    </td>
                   </tr>
                 ))}
               </tbody>

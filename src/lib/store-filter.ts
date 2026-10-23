@@ -10,7 +10,6 @@ export type StoreParams = {
   aud?: string; // destinatario: mujer | hombre | ninos
   metal?: string; // plateado | dorado | oro-rosa
   color?: string; // color de piedra: rosa | cristal | aurora | verde | negro
-  agua?: string; // "1" → solo aptos para agua
   regalo?: string; // "1" → solo ideas para regalar
   sort?: string; // clave de ordenamiento (ver SORT_OPTIONS)
   page?: string; // número de página (1-based)
@@ -59,7 +58,6 @@ export function buildStoreWhere(params: StoreParams): Prisma.ProductWhereInput {
 
   if (params.metal?.trim()) where.metal = params.metal.trim();
   if (params.color?.trim()) where.stoneColor = params.color.trim();
-  if (params.agua === "1") where.waterproof = true;
   if (params.regalo === "1") where.giftIdea = true;
 
   const price: Prisma.IntFilter = {};
@@ -101,7 +99,6 @@ export function buildStoreQuery(
     "aud",
     "metal",
     "color",
-    "agua",
     "regalo",
   ] as const) {
     const value = merged[key]?.trim();

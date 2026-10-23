@@ -19,20 +19,17 @@ import { Pagination } from "@/components/Pagination";
 
 export const dynamic = "force-dynamic";
 
-const CATS = [
-  { slug: "", name: "Todo" },
-  { slug: "anillos", name: "Anillos" },
-  { slug: "collares", name: "Collares" },
-  { slug: "aros", name: "Aros" },
-  { slug: "pulseras", name: "Pulseras" },
-];
-
 export default async function TiendaPage({
   searchParams,
 }: {
   searchParams: Promise<StoreParams>;
 }) {
   const params = await searchParams;
+  const dbCategories = await prisma.category.findMany({
+    orderBy: [{ position: "asc" }, { name: "asc" }],
+    select: { slug: true, name: true },
+  });
+  const CATS = [{ slug: "", name: "Todo" }, ...dbCategories];
   const {
     cat = "",
     q = "",
@@ -41,7 +38,6 @@ export default async function TiendaPage({
     aud = "",
     metal = "",
     color = "",
-    agua = "",
     regalo = "",
     sort = DEFAULT_SORT,
   } = params;
@@ -70,15 +66,12 @@ export default async function TiendaPage({
     aud ||
     metal ||
     color ||
-    agua ||
     regalo ||
     (sort && sort !== DEFAULT_SORT),
   );
 
   // Filtros avanzados activos (los que van dentro del panel "Filtros").
-  const advancedCount = [aud, metal, color, agua === "1", regalo === "1"].filter(
-    Boolean,
-  ).length;
+  const advancedCount = [aud, metal, color, regalo === "1"].filter(Boolean).length;
 
   return (
     <>
@@ -159,12 +152,6 @@ export default async function TiendaPage({
 
             <FilterRow label="Extras">
               <Pill
-                href={buildStoreQuery(params, { agua: agua === "1" ? "" : "1" })}
-                active={agua === "1"}
-              >
-                💧 Aptos para agua
-              </Pill>
-              <Pill
                 href={buildStoreQuery(params, { regalo: regalo === "1" ? "" : "1" })}
                 active={regalo === "1"}
                 tone="gold"
@@ -185,7 +172,6 @@ export default async function TiendaPage({
           {aud && <input type="hidden" name="aud" value={aud} />}
           {metal && <input type="hidden" name="metal" value={metal} />}
           {color && <input type="hidden" name="color" value={color} />}
-          {agua === "1" && <input type="hidden" name="agua" value="1" />}
           {regalo === "1" && <input type="hidden" name="regalo" value="1" />}
           <div className="relative min-w-56 flex-1">
             <Search className="text-muted pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
@@ -239,7 +225,6 @@ export default async function TiendaPage({
                 name={p.name}
                 price={p.basePrice}
                 compareAtPrice={p.compareAtPrice}
-                waterproof={p.waterproof}
                 image={p.images[0]?.url}
                 category={p.category?.name}
                 featured={p.featured}
@@ -279,13 +264,7 @@ export default async function TiendaPage({
   );
 }
 
-function FilterRow({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function FilterRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-wrap items-center gap-2">
       <span className="text-muted w-14 shrink-0 text-xs tracking-wide uppercase">

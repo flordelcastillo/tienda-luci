@@ -71,13 +71,11 @@ describe("buildStoreWhere", () => {
     expect(where.stoneColor).toBe("rosa");
   });
 
-  it("aplica los toggles de apto agua e ideas para regalar solo con valor '1'", () => {
-    expect(buildStoreWhere({ agua: "1", regalo: "1" })).toMatchObject({
-      waterproof: true,
+  it("aplica el toggle de ideas para regalar solo con valor '1'", () => {
+    expect(buildStoreWhere({ regalo: "1" })).toMatchObject({
       giftIdea: true,
     });
-    const off = buildStoreWhere({ agua: "0", regalo: "" });
-    expect(off.waterproof).toBeUndefined();
+    const off = buildStoreWhere({ regalo: "" });
     expect(off.giftIdea).toBeUndefined();
   });
 });

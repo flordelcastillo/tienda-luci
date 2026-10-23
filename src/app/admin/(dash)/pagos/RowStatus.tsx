@@ -8,13 +8,7 @@ import { updateOrderStatus } from "./actions";
 import { ORDER_LABELS } from "./StatusBadge";
 import type { OrderStatus } from "@/generated/prisma/enums";
 
-const OPTIONS: OrderStatus[] = [
-  "PENDING",
-  "PAID",
-  "FULFILLED",
-  "CANCELLED",
-  "REFUNDED",
-];
+const OPTIONS: OrderStatus[] = ["PENDING", "PAID", "FULFILLED", "CANCELLED", "REFUNDED"];
 
 // Cambio de estado directo desde la lista de pedidos, sin entrar al detalle.
 export function RowStatus({

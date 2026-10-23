@@ -78,7 +78,10 @@ export function CouponsAdmin({ coupons }: { coupons: Coupon[] }) {
             />
           </Field>
           <Field label="Tipo">
-            <Select value={kind} onChange={(e) => setKind(e.target.value as "percent" | "fixed")}>
+            <Select
+              value={kind}
+              onChange={(e) => setKind(e.target.value as "percent" | "fixed")}
+            >
               <option value="percent">Porcentaje (%)</option>
               <option value="fixed">Monto fijo ($)</option>
             </Select>
@@ -111,7 +114,11 @@ export function CouponsAdmin({ coupons }: { coupons: Coupon[] }) {
             />
           </Field>
           <Field label="Vence el (opcional)">
-            <Input type="date" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} />
+            <Input
+              type="date"
+              value={expiresAt}
+              onChange={(e) => setExpiresAt(e.target.value)}
+            />
           </Field>
         </div>
         <div className="flex justify-end">
@@ -164,7 +171,9 @@ export function CouponsAdmin({ coupons }: { coupons: Coupon[] }) {
                   </p>
                 </div>
                 <button
-                  onClick={() => run(() => setCouponActive(c.id, !c.active), "Cupón actualizado")}
+                  onClick={() =>
+                    run(() => setCouponActive(c.id, !c.active), "Cupón actualizado")
+                  }
                   className="text-muted hover:text-sage"
                   aria-label={c.active ? "Desactivar" : "Activar"}
                   title={c.active ? "Desactivar" : "Activar"}

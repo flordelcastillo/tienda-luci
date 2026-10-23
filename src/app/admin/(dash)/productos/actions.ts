@@ -37,7 +37,6 @@ const productSchema = z.object({
   metal: z.string().default(""),
   stoneColor: z.string().default(""),
   theme: z.string().default(""),
-  waterproof: z.boolean().default(true),
   hypoallergenic: z.boolean().default(true),
   giftIdea: z.boolean().default(false),
   giftWrap: z.boolean().default(false),
@@ -54,7 +53,6 @@ function attrData(data: z.infer<typeof productSchema>) {
     metal: data.metal,
     stoneColor: data.stoneColor,
     theme: data.theme,
-    waterproof: data.waterproof,
     hypoallergenic: data.hypoallergenic,
     giftIdea: data.giftIdea,
     giftWrap: data.giftWrap,
@@ -207,7 +205,6 @@ export async function updateProduct(id: string, _prev: unknown, formData: FormDa
 // Edición en lote: aplica un mismo atributo a una selección de productos.
 const BULK_STRING_FIELDS = ["metal", "stoneColor", "theme", "audience"] as const;
 const BULK_BOOL_FIELDS = [
-  "waterproof",
   "hypoallergenic",
   "giftIdea",
   "giftWrap",
