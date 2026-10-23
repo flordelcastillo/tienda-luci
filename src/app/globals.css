@@ -2,17 +2,17 @@
 
 /* ─────────────── Design tokens — Joyería (Soft UI / editorial) ─────────────── */
 :root {
-  --cream: #f7f3ef; /* fondo principal */
-  --sand: #e8ddd2; /* neutro cálido */
-  --sage: #3b4a3f; /* primario de marca */
+  --cream: #ffffff; /* fondo principal */
+  --sand: #f4f1f0; /* neutro claro */
+  --sage: #231f20; /* primario de marca (negro del logo) */
   --sage-soft: #6b7d70;
-  --rose: #e7c8c4; /* acento rosa empolvado */
-  --rose-soft: #f2e0dd;
-  --gold: #c9a96a; /* detalle premium */
-  --gold-dark: #a8863f;
-  --ink: #2a2724; /* texto */
+  --rose: #f6d9e0; /* rosa del logo */
+  --rose-soft: #fbeef1;
+  --gold: #d6849c; /* acento rosa */
+  --gold-dark: #b4506c;
+  --ink: #231f20; /* texto */
   --muted: #7a736c; /* texto secundario */
-  --line: #e4dbd1; /* bordes */
+  --line: #ebe7e5; /* bordes */
 }
 
 @theme inline {
@@ -52,4 +52,24 @@ h3,
 .arch {
   border-radius: 50% 50% var(--radius-card) var(--radius-card) / 40% 40%
     var(--radius-card) var(--radius-card);
+}
+
+/* Barra de anuncios que se desplaza (se duplica el contenido para el loop). */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 40s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
 }

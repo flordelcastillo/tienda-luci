@@ -180,7 +180,7 @@ export function CartView({ whatsappNumber }: { whatsappNumber: string }) {
         <p className="text-muted">Tu carrito está vacío.</p>
         <Link
           href="/tienda"
-          className="bg-sage text-cream mt-4 inline-block rounded-full px-5 py-2.5 text-sm transition-colors hover:bg-[#2f3c33]"
+          className="bg-sage text-cream mt-4 inline-block rounded-full px-5 py-2.5 text-sm transition-colors hover:opacity-85"
         >
           Ir a la tienda
         </Link>

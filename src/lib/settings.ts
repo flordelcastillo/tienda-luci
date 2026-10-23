@@ -17,12 +17,12 @@ export const SETTINGS_DEFAULTS = {
   whatsapp: "5492657502410",
   notifyEmail: "",
   freeShippingCents: 3000000,
-  colorPrimary: "#3b4a3f",
-  colorAccent: "#c9a96a",
-  colorBg: "#f7f3ef",
-  colorNeutral: "#e8ddd2",
-  colorRose: "#e7c8c4",
-  colorText: "#2a2724",
+  colorPrimary: "#231f20",
+  colorAccent: "#d6849c",
+  colorBg: "#ffffff",
+  colorNeutral: "#f4f1f0",
+  colorRose: "#f6d9e0",
+  colorText: "#231f20",
 };
 
 export type SiteSettings = typeof SETTINGS_DEFAULTS;
