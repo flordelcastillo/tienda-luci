@@ -72,10 +72,7 @@ export function SettingsForm({ initial }: { initial: Initial }) {
       <Card className="space-y-4 p-6">
         <h2 className="font-display text-ink text-lg">Marca y textos</h2>
         <Field label="Nombre de la marca">
-          <Input
-            value={form.brandName}
-            onChange={(e) => set("brandName", e.target.value)}
-          />
+          <Input value={form.brandName} onChange={(e) => set("brandName", e.target.value)} />
         </Field>
         <Field label="Barra de anuncio (arriba de todo)">
           <Input
@@ -85,16 +82,10 @@ export function SettingsForm({ initial }: { initial: Initial }) {
         </Field>
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Bajada del hero (arriba del título)">
-            <Input
-              value={form.heroKicker}
-              onChange={(e) => set("heroKicker", e.target.value)}
-            />
+            <Input value={form.heroKicker} onChange={(e) => set("heroKicker", e.target.value)} />
           </Field>
           <Field label="Título principal">
-            <Input
-              value={form.heroTitle}
-              onChange={(e) => set("heroTitle", e.target.value)}
-            />
+            <Input value={form.heroTitle} onChange={(e) => set("heroTitle", e.target.value)} />
           </Field>
         </div>
         <Field label="Subtítulo del hero">
@@ -105,10 +96,7 @@ export function SettingsForm({ initial }: { initial: Initial }) {
           />
         </Field>
         <Field label="Frase destacada (dorada)">
-          <Input
-            value={form.heroTagline}
-            onChange={(e) => set("heroTagline", e.target.value)}
-          />
+          <Input value={form.heroTagline} onChange={(e) => set("heroTagline", e.target.value)} />
         </Field>
         <Field label="Texto del pie de página">
           <Textarea
@@ -122,18 +110,11 @@ export function SettingsForm({ initial }: { initial: Initial }) {
       <Card className="space-y-4 p-6">
         <h2 className="font-display text-ink text-lg">Imagen del hero</h2>
         <p className="text-muted text-sm">
-          Foto grande de la portada. Si la dejás vacía, se muestra el banner rosa con el
-          logo.
+          Foto grande de la portada. Si la dejás vacía, se muestra el banner rosa con el logo.
         </p>
         {form.heroImage && (
           <div className="bg-sand relative aspect-[4/5] w-40 overflow-hidden rounded-xl">
-            <Image
-              src={form.heroImage}
-              alt="Hero"
-              fill
-              unoptimized
-              className="object-cover"
-            />
+            <Image src={form.heroImage} alt="Hero" fill unoptimized className="object-cover" />
           </div>
         )}
         <div className="flex items-center gap-3">
@@ -161,47 +142,23 @@ export function SettingsForm({ initial }: { initial: Initial }) {
           Tocá cada color para cambiarlo. Se aplican a toda la tienda.
         </p>
         <div className="grid gap-4 sm:grid-cols-2">
-          <ColorField
-            label="Principal (marca)"
-            value={form.colorPrimary}
-            onChange={(v) => set("colorPrimary", v)}
-          />
-          <ColorField
-            label="Acento (dorado)"
-            value={form.colorAccent}
-            onChange={(v) => set("colorAccent", v)}
-          />
-          <ColorField
-            label="Fondo (crema)"
-            value={form.colorBg}
-            onChange={(v) => set("colorBg", v)}
-          />
-          <ColorField
-            label="Neutro cálido"
-            value={form.colorNeutral}
-            onChange={(v) => set("colorNeutral", v)}
-          />
-          <ColorField
-            label="Rosa (detalles)"
-            value={form.colorRose}
-            onChange={(v) => set("colorRose", v)}
-          />
-          <ColorField
-            label="Texto"
-            value={form.colorText}
-            onChange={(v) => set("colorText", v)}
-          />
+          <ColorField label="Principal (marca)" value={form.colorPrimary} onChange={(v) => set("colorPrimary", v)} />
+          <ColorField label="Acento (dorado)" value={form.colorAccent} onChange={(v) => set("colorAccent", v)} />
+          <ColorField label="Fondo (crema)" value={form.colorBg} onChange={(v) => set("colorBg", v)} />
+          <ColorField label="Neutro cálido" value={form.colorNeutral} onChange={(v) => set("colorNeutral", v)} />
+          <ColorField label="Rosa (detalles)" value={form.colorRose} onChange={(v) => set("colorRose", v)} />
+          <ColorField label="Texto" value={form.colorText} onChange={(v) => set("colorText", v)} />
         </div>
       </Card>
 
       <Card className="space-y-4 p-6">
         <h2 className="font-display text-ink text-lg">Contacto y ventas</h2>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="WhatsApp (formato internacional sin +)" hint="Ej: 5492657502410">
-            <Input
-              value={form.whatsapp}
-              onChange={(e) => set("whatsapp", e.target.value)}
-            />
+          <Field
+            label="WhatsApp (formato internacional sin +)"
+            hint="Ej: 5492657502410"
+          >
+            <Input value={form.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} />
           </Field>
           <Field label="Envío gratis desde ($)" hint="0 = sin envío gratis">
             <Input
@@ -252,11 +209,7 @@ function ColorField({
           onChange={(e) => onChange(e.target.value)}
           className="border-line h-10 w-14 rounded-lg border"
         />
-        <Input
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-32"
-        />
+        <Input value={value} onChange={(e) => onChange(e.target.value)} className="w-32" />
       </div>
     </Field>
   );

@@ -34,8 +34,7 @@ const createSchema = z
 export async function createCoupon(raw: unknown) {
   if (!(await requireSession())) return { error: "No autorizado" };
   const parsed = createSchema.safeParse(raw);
-  if (!parsed.success)
-    return { error: parsed.error.issues[0]?.message ?? "Datos inválidos" };
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Datos inválidos" };
 
   const code = normalizeCode(parsed.data.code);
   const exists = await prisma.coupon.findUnique({ where: { code } });

@@ -264,7 +264,13 @@ export default async function TiendaPage({
   );
 }
 
-function FilterRow({ label, children }: { label: string; children: React.ReactNode }) {
+function FilterRow({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="flex flex-wrap items-center gap-2">
       <span className="text-muted w-14 shrink-0 text-xs tracking-wide uppercase">

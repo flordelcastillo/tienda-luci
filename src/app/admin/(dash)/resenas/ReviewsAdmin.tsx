@@ -67,22 +67,13 @@ export function ReviewsAdmin({
             </Select>
           </Field>
           <Field label="Autora / cliente">
-            <Input
-              value={author}
-              onChange={(e) => setAuthor(e.target.value)}
-              placeholder="Ej: Meli G."
-            />
+            <Input value={author} onChange={(e) => setAuthor(e.target.value)} placeholder="Ej: Meli G." />
           </Field>
         </div>
         <Field label="Puntaje">
           <div className="flex gap-1">
             {[1, 2, 3, 4, 5].map((n) => (
-              <button
-                key={n}
-                type="button"
-                onClick={() => setRating(n)}
-                aria-label={`${n} estrellas`}
-              >
+              <button key={n} type="button" onClick={() => setRating(n)} aria-label={`${n} estrellas`}>
                 <Star
                   className={`size-6 ${n <= rating ? "fill-gold text-gold" : "text-line"}`}
                 />
@@ -105,9 +96,7 @@ export function ReviewsAdmin({
           <h2 className="font-display text-ink text-lg">Reseñas ({reviews.length})</h2>
         </div>
         {reviews.length === 0 ? (
-          <p className="text-muted px-6 py-10 text-center text-sm">
-            Todavía no hay reseñas.
-          </p>
+          <p className="text-muted px-6 py-10 text-center text-sm">Todavía no hay reseñas.</p>
         ) : (
           <ul className="divide-line divide-y">
             {reviews.map((r) => (
@@ -144,11 +133,7 @@ export function ReviewsAdmin({
                     className="text-muted hover:text-sage rounded-lg p-2"
                     title={r.approved ? "Ocultar" : "Mostrar"}
                   >
-                    {r.approved ? (
-                      <Eye className="size-4" />
-                    ) : (
-                      <EyeOff className="size-4" />
-                    )}
+                    {r.approved ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
                   </button>
                   <button
                     onClick={() => {

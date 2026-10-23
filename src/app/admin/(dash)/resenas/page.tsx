@@ -9,10 +9,7 @@ export default async function ResenasPage() {
       orderBy: { createdAt: "desc" },
       include: { product: { select: { name: true } } },
     }),
-    prisma.product.findMany({
-      orderBy: { name: "asc" },
-      select: { id: true, name: true },
-    }),
+    prisma.product.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
   ]);
 
   return (
