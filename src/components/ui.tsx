@@ -10,7 +10,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: "bg-sage text-cream hover:bg-[#2f3c33]",
+        primary: "bg-sage text-cream hover:opacity-85",
         outline: "border border-sage text-sage hover:bg-sage hover:text-cream",
         gold: "bg-gold text-white hover:bg-gold-dark",
         ghost: "text-sage hover:bg-sand/60",

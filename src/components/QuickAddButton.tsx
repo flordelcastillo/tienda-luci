@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Plus } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import { addToCart } from "@/lib/cart";
 
@@ -16,8 +16,8 @@ export type QuickAdd = {
   multiVariant: boolean; // si tiene varias variantes reales
 };
 
-// Botón de "agregar al carrito" directo desde la grilla de la tienda. Si el
-// producto tiene varias variantes, mejor mandar a la ficha para que elija.
+// Botón "Agregar" de la tarjeta de producto. Si el producto tiene varias
+// variantes, manda a la ficha para que elija.
 export function QuickAddButton({ item }: { item: QuickAdd }) {
   const router = useRouter();
 
@@ -49,11 +49,11 @@ export function QuickAddButton({ item }: { item: QuickAdd }) {
   return (
     <button
       onClick={onClick}
-      aria-label="Agregar al carrito"
-      title={item.multiVariant ? "Elegí la variante" : "Agregar al carrito"}
-      className="bg-sage text-cream absolute right-3 bottom-3 flex size-9 items-center justify-center rounded-full opacity-0 shadow-md transition-all group-hover:opacity-100 hover:bg-[#2f3c33]"
+      aria-label={item.multiVariant ? undefined : "Agregar al carrito"}
+      className="bg-sage text-cream inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs transition-opacity hover:opacity-85"
     >
-      <Plus className="size-5" />
+      {item.multiVariant ? "Ver opciones" : "Agregar"}
+      <ShoppingBag className="size-3.5" />
     </button>
   );
 }

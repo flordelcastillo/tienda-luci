@@ -16,9 +16,9 @@ test("desde la tienda se navega al detalle del producto", async ({ page }) => {
 test("el detalle muestra la galería con la imagen del producto", async ({ page }) => {
   await page.goto(`/producto/${SLUG}`);
 
-  // La imagen principal de la galería es la primera del DOM (el header no tiene
-  // imágenes). Verificamos que se renderiza con el alt del producto.
-  const main = page.getByRole("img").first();
+  // La imagen principal de la galería se identifica por el alt del producto
+  // (el header tiene el logo, que también es una imagen).
+  const main = page.getByRole("img", { name: NAME }).first();
   await expect(main).toBeVisible();
   await expect(main).toHaveAttribute("alt", NAME);
 });
