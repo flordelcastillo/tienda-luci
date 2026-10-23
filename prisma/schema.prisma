@@ -20,11 +20,14 @@ model AdminUser {
 
 // ─────────────────────────── Catálogo ───────────────────────────
 model Category {
-  id        String    @id @default(cuid())
-  name      String
-  slug      String    @unique
-  createdAt DateTime  @default(now())
-  products  Product[]
+  id         String    @id @default(cuid())
+  name       String
+  slug       String    @unique
+  image      String    @default("") // foto de la tarjeta en la home (vacío = la del último producto)
+  position   Int       @default(0) // orden en la home y en la tienda
+  showOnHome Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  products   Product[]
 }
 
 model Product {
@@ -39,7 +42,7 @@ model Product {
   audience       String        @default("mujer") // mujer | hombre | ninos | unisex
   metal          String        @default("") // plateado | dorado | oro-rosa
   stoneColor     String        @default("") // color de circonia/piedra: rosa | cristal | verde | aurora | negro
-  waterproof     Boolean       @default(true) // apto agua / no se oxida
+  waterproof     Boolean       @default(true) // sin uso: ya no se muestra en la tienda
   giftIdea       Boolean       @default(false) // aparece en "Ideas para regalar"
   giftWrap       Boolean       @default(false) // se puede agregar cajita de regalo
   theme          String        @default("") // tema para combos/sets: corazon | tulipan | gatito | mariposa | nudo

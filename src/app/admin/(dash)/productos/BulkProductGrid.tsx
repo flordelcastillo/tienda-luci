@@ -55,7 +55,6 @@ const BULK_FIELDS: FieldDef[] = [
       { value: "unisex", label: "Unisex" },
     ],
   },
-  { field: "waterproof", label: "Apto agua", type: "bool" },
   { field: "giftIdea", label: "Idea para regalar", type: "bool" },
   { field: "giftWrap", label: "Cajita de regalo", type: "bool" },
   { field: "featured", label: "Destacado", type: "bool" },

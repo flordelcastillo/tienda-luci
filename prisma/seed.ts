@@ -254,7 +254,7 @@ async function main() {
   // Reseñas de ejemplo (prueba social). Se re-crean desde cero en cada seed.
   const reviews: Record<string, { author: string; rating: number; text: string }[]> = {
     "dije-corazon-rosa": [
-      { author: "Caro G.", rating: 5, text: "Hermoso, más lindo en persona. No se me puso verde ni con el agua 💗" },
+      { author: "Caro G.", rating: 5, text: "Hermoso, más lindo en persona. No se me puso verde y me encantó 💗" },
       { author: "Mica", rating: 5, text: "Lo uso todos los días para bañarme y sigue igual de brillante." },
     ],
     "dije-corazon-cristal-aurora": [

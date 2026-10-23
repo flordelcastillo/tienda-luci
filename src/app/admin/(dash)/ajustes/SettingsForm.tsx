@@ -110,7 +110,7 @@ export function SettingsForm({ initial }: { initial: Initial }) {
       <Card className="space-y-4 p-6">
         <h2 className="font-display text-ink text-lg">Imagen del hero</h2>
         <p className="text-muted text-sm">
-          Foto grande de la portada. Si la dejás vacía, se usa la primera pieza destacada.
+          Foto grande de la portada. Si la dejás vacía, se muestra el banner rosa con el logo.
         </p>
         {form.heroImage && (
           <div className="bg-sand relative aspect-[4/5] w-40 overflow-hidden rounded-xl">

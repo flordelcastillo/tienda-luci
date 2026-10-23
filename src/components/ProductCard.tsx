@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Droplets } from "lucide-react";
 import { formatARS } from "@/lib/money";
 import { Badge } from "@/components/ui";
 import { QuickAddButton, type QuickAdd } from "@/components/QuickAddButton";
@@ -10,7 +9,6 @@ type Props = {
   name: string;
   price: number;
   compareAtPrice?: number | null;
-  waterproof?: boolean;
   image?: string;
   category?: string;
   featured?: boolean;
@@ -22,7 +20,6 @@ export function ProductCard({
   name,
   price,
   compareAtPrice,
-  waterproof,
   image,
   category,
   featured,
@@ -56,15 +53,6 @@ export function ProductCard({
             </Badge>
           )}
         </div>
-        {waterproof && (
-          <span
-            className="absolute top-3 right-3 inline-flex items-center gap-1 rounded-full bg-white/85 px-2 py-0.5 text-[11px] text-sky-700 backdrop-blur"
-            title="Apto agua · no se oxida"
-          >
-            <Droplets className="size-3" />
-            Agua
-          </span>
-        )}
       </div>
       <div className="pt-3">
         {category && <p className="text-muted text-xs">{category}</p>}

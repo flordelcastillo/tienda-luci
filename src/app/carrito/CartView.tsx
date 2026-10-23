@@ -189,7 +189,7 @@ export function CartView({ whatsappNumber }: { whatsappNumber: string }) {
   }
 
   return (
-    <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_20rem]">
+    <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[1fr_20rem]">
       {/* Ítems */}
       <div className="space-y-4">
         {cart.map((i) => {
@@ -280,7 +280,7 @@ export function CartView({ whatsappNumber }: { whatsappNumber: string }) {
                   }}
                   placeholder="Cupón de descuento"
                   aria-label="Cupón de descuento"
-                  className="uppercase"
+                  className="min-w-0 uppercase"
                 />
                 <Button
                   variant="outline"

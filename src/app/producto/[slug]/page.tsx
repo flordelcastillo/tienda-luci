@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ShieldCheck, Ruler, Droplets, Gift, Star, Truck } from "lucide-react";
+import { ShieldCheck, Ruler, Gift, Star, Truck } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { SiteHeader, SiteFooter } from "@/components/storefront";
 import { ProductGallery } from "@/components/ProductGallery";
@@ -154,12 +154,6 @@ export default async function ProductoPage({
                 <span className="text-sage bg-sage/10 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm">
                   <ShieldCheck className="size-4" />
                   Apto piel sensible
-                </span>
-              )}
-              {product.waterproof && (
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-50 px-3 py-1 text-sm text-sky-700">
-                  <Droplets className="size-4" />
-                  Apto agua · no se oxida
                 </span>
               )}
               {product.giftWrap && (

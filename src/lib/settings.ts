@@ -5,7 +5,7 @@ import { prisma } from "./prisma";
 // estos valores por defecto para que la página nunca quede en blanco.
 export const SETTINGS_DEFAULTS = {
   brandName: "Teia",
-  announcement: "Todas las piezas en acero quirúrgico, aptas para agua",
+  announcement: "Todas las piezas en acero quirúrgico",
   heroKicker: "Nueva colección",
   heroTitle: "Brillá con lo esencial.",
   heroSubtitle:
