@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Droplets, Gift } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { SiteHeader, SiteFooter } from "@/components/storefront";
 import { ProductCard } from "@/components/ProductCard";
@@ -180,31 +179,6 @@ export default async function HomePage() {
                 </Link>
               );
             })}
-        </div>
-
-        <div className="mt-3 grid gap-3 sm:grid-cols-2">
-          <Link
-            href="/tienda?agua=1"
-            className="border-line hover:border-sage flex items-center gap-4 rounded-xl border p-5 transition-colors"
-          >
-            <Droplets className="size-7 text-sky-600" />
-            <div>
-              <p className="text-ink text-sm font-medium">Aptos para agua</p>
-              <p className="text-muted text-sm">
-                Piezas que no se oxidan ni pierden el brillo
-              </p>
-            </div>
-          </Link>
-          <Link
-            href="/tienda?regalo=1"
-            className="border-line hover:border-sage flex items-center gap-4 rounded-xl border p-5 transition-colors"
-          >
-            <Gift className="text-gold-dark size-7" />
-            <div>
-              <p className="text-ink text-sm font-medium">Ideas para regalar</p>
-              <p className="text-muted text-sm">Corazones, tulipanes y más, con cajita</p>
-            </div>
-          </Link>
         </div>
       </section>
 
